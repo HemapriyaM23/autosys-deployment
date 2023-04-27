@@ -14,8 +14,9 @@ pipeline {
                 steps{
                     script{
 
-                        sh "ssh srvamr-sfaops@amer@devserver"
-                        sh "scp -r test.jil srvamr-sfaops@amer@devserver:/tmp"
+                        //sh "ssh srvamr-sfaops@amer@devserver"
+                        //sh "scp -r test.jil srvamr-sfaops@amer@devserver:/tmp"
+                        sh "pwd"
           
                         }
                 }
