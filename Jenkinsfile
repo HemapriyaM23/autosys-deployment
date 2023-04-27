@@ -15,7 +15,7 @@ pipeline {
                     script{
 
                         sh "ssh srvamr-sfaops@amer@devserver"
-                        sh "scp -r test.jil srvamr-sfaops@amer@euz1nldw107:/tmp"
+                        sh "scp -r test.jil srvamr-sfaops@amer@devserver:/tmp"
           
                         }
                 }
