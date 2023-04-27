@@ -21,12 +21,4 @@ pipeline {
                 }
         }
     }
-    post {
-        failure {
-            notification_email(Email_Alert: Email_Alert, Notify_to: Notify_to) 
-        }
-        success {
-            notification_email(Email_Alert: Email_Alert, Notify_to: Notify_to)
-        }
-    }
 }
