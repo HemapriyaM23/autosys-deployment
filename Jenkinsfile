@@ -14,8 +14,8 @@ pipeline {
                 steps{
                     script{
 
-                        //sh "ssh srvamr-sfaops@amer@euz1nldw110"
-                        sh "scp -r test.jil srvamr-sfaops@amer@euz1nldw110:/tmp"
+                        sh "ssh srvamr-sfaops@amer@euz1nldw110 'autoping -m euz1nldw110'"
+                        //sh "scp -r test.jil srvamr-sfaops@amer@euz1nldw110:/tmp"
                         sh "pwd"
           
                         }
