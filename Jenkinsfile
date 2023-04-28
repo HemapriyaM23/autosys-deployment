@@ -15,7 +15,7 @@ pipeline {
                     script{
 
                         //sh "ssh srvamr-sfaops@amer@euz1nldw110 'autostatus -m euz1nldw110'"
-                        sh "ssh srvamr-sfaops@amer@euz1nldw110 'ls /app'"
+                        sh "ssh SRVAMR-PALIGN@amer@amrvopsfa000001 'ls /home'"
                         //sh "scp -r test.jil srvamr-sfaops@amer@euz1nldw110:/tmp"
                         sh "pwd"
           
