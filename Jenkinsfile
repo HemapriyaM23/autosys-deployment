@@ -14,11 +14,11 @@ pipeline {
                 steps{
                     script{
 
-                        sh 'ls ./script'
+                        //sh 'ls -l ./script'
                         
-                        //sh "ssh srvamr-sfaops@amer@amrvopsfa000001 'ls /opt/CA/WorkloadAutomationAE/autosys'"
+                        sh "ssh srvamr-palign@amer@amrvopsfa000001 'ls /opt/CA/WorkloadAutomationAE/autosys'"
                         //sh "scp -r test.jil srvamr-sfaops@amer@amrvopsfa000001:/tmp"
-                        //sh "ssh srvamr-sfaops@amer@amrvopsfa000001 'jil < /tmp/test.jil'"
+                        sh "ssh srvamr-palign@amer@amrvopsfa000001 'jil < /tmp/test.jil'"
 
                         sh "pwd"
           
