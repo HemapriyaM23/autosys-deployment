@@ -6,7 +6,7 @@ gitclonebasepath=`pwd`
 echo "into sh"
 
 #Defining the work folder
-workfolder="${gitclonebasepath}/../../../deployfolder"
+workfolder="${gitclonebasepath}/deployfolder"
 echo "${workfolder}"
 scpfolder="${workfolder}/autosys_scp"
 autosyslistfile="${scpfolder}/autosysfile.jil"
