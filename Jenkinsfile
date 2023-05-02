@@ -17,9 +17,8 @@ pipeline {
                         //sh "ssh srvamr-sfaops@amer@euz1nldw110 'autostatus -m euz1nldw110'"
                         sh "ssh srvamr-sfaops@amer@amrvopsfa000001 'ls /home'"
                         sh "scp -r test.jil srvamr-sfaops@amer@amrvopsfa000001:/tmp"
-                        sh "ssh srvamr-sfaops@amer@amrvopsfa000001 <<EOF
-                        jil < /tmp/test.jil 
-                        EOF"
+                        sh "ssh srvamr-sfaops@amer@amrvopsfa000001 'jil < /tmp/test.jil'"
+
                         sh "pwd"
           
                         }
