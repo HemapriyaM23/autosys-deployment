@@ -1,3 +1,4 @@
 test
  ./script/deploy.sh
 /var/lib/jenkins/workspace/dbox_test_autosys_deployment_dev@tmp/durable-6b5c0ea0/script.sh: line 1: ./script/deploy.sh: Permission denied
+07:28:16 Jenkins-Imposed API Limiter: Current quota for Github API usage has 14 remaining (1 over budget). Next quota of 60 in 13 min. Sleeping until reset.
