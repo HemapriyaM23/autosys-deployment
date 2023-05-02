@@ -3,7 +3,7 @@
 
 
 gitclonebasepath=`pwd`
-
+echo "into sh"
 
 #Defining the work folder
 workfolder="${gitclonebasepath}/../../../deployfolder"
