@@ -2,7 +2,7 @@
 
 
 
-gitclonebasepath=`pwd`
+#gitclonebasepath=`pwd`
 echo "into sh"
 
 #Defining the work folder
