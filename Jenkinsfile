@@ -15,7 +15,7 @@ pipeline {
                     script{
 
                         
-                        sh "ssh srvamr-sfaops@amer@amrvopsfa000001 'ps aux | grep autosys'"
+                        sh "ssh srvamr-sfaops@amer@amrvopsfa000001 'ps aux | grep autosys_agent'"
                         //sh "scp -r test.jil srvamr-sfaops@amer@amrvopsfa000001:/tmp"
                         //sh "ssh srvamr-sfaops@amer@amrvopsfa000001 'jil < /tmp/test.jil'"
 
