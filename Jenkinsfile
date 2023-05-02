@@ -14,7 +14,7 @@ pipeline {
                 steps{
                     script{
 
-                        sh ./script/deploy.sh
+                        sh './script/deploy.sh'
                         
                         //sh "ssh srvamr-sfaops@amer@amrvopsfa000001 'ls /opt/CA/WorkloadAutomationAE/autosys'"
                         //sh "scp -r test.jil srvamr-sfaops@amer@amrvopsfa000001:/tmp"
