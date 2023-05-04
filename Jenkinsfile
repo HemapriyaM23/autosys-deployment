@@ -15,7 +15,7 @@ pipeline {
                     script{
 
                         //sh 'ls -l ./script'
-                        sh 'curl -u "SRVAMR-SFAOPS:${{ secrets.PASSWORD }}" -k -X GET https://amraelp00011055:9443/AEWS/job/test'
+                        sh 'curl -u "SRVAMR-SFAOPS:0wO:v%He[a;_HzdFYkyKwS34g" -k -X GET https://amraelp00011055:9443/AEWS/job/test'
                         //sh "ssh -i /var/lib/jenkins/.ssh/palign_id_rsa srvamr-palign@amer@amrvopsfa000001 'ls -l / '"
                         //sh "scp  -i /var/lib/jenkins/.ssh/palign_id_rsa -r test.jil srvamr-palign@amer@amrvopsfa000001:/home/srvamr-palign/"
                         //sh "ssh -i /var/lib/jenkins/.ssh/palign_id_rsa srvamr-palign@amer@amrvopsfa000001 'jil < /home/srvamr-palign/test.jil'"
