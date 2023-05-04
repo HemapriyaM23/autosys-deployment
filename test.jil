@@ -3,5 +3,5 @@ test
 /var/lib/jenkins/workspace/dbox_test_autosys_deployment_dev@tmp/durable-6b5c0ea0/script.sh: line 1: ./script/deploy.sh: Permission denied
 07:28:16 Jenkins-Imposed API Limiter: Current quota for Github API usage has 14 remaining (1 over budget). Next quota of 60 in 13 min. Sleeping until reset.
 
-WorkflowScript: 18: expecting '}', found 'SRVAMR-SFAOPS:123' @ line 18, column 33.
-                           curl -u "SRVAMR-SFAOPS:123" -k -X GET https://amraelp00011055.pfizer.com:9443/AEWS/job/test
+WorkflowScript: 18: expecting '}', found 'SRVAMR-SFAOPS:' @ line 18, column 33.
+                           curl -u "SRVAMR-SFAOPS:${{ secrets.DEV_DEPLOY_ROLE }}" -k -X GET https://amraelp00011055.pfizer.com:9443/AEWS/job/test
