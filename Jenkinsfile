@@ -24,7 +24,7 @@ pipeline {
                         //sh "scp  -i /var/lib/jenkins/.ssh/palign_id_rsa -r test.jil srvamr-palign@amer@amrvopsfa000001:/home/srvamr-palign/"
                         //sh "ssh -i /var/lib/jenkins/.ssh/palign_id_rsa srvamr-palign@amer@amrvopsfa000001 'jil < /home/srvamr-palign/test.jil'"
 
-                        sh "echo 'test.jil'"
+                        sh 'echo "test.jil"'
           
                         }
                 }
