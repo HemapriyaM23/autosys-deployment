@@ -1,14 +1,14 @@
 insert_job: d2compaus_pa_dependency_job_hemap   job_type: CMD 
 
-command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/echo 'hello'
+command: echo 'hello'
 machine: amrvopsfa000001
 owner: SRVAMR-PALIGN
 permission: me,mx,ge,gx
 date_conditions: 0
 description: "test"
 job_terminator: 1
-std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
-std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+std_out_file: "/app/etl/palign/logs/d2compaus_pa_dependency_job_hemap.out"
+std_err_file: "/app/etl/palign/logs/d2compaus_pa_dependency_job_hemap.err"
 alarm_if_fail: 0
 alarm_if_terminated: 0
 send_notification: F
