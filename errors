@@ -1,0 +1,18 @@
++ curl -X POST -H 'Content-Type: text/plain' --upload-file test.jil https://amraelp00011055.pfizer.com:9443/AEWS/jil -k --user 'SRVAMR-SFAOPS:****' -i
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0   523    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0
+100   523    0     0  100   523      0    222  0:00:02  0:00:02 --:--:--   222
+100   523    0     0  100   523      0    152  0:00:03  0:00:03 --:--:--   152
+100   597    0    74  100   523     19    140  0:00:03  0:00:03 --:--:--   160
+HTTP/1.1 100 
+
+HTTP/1.1 406 
+Content-Type: application/json
+Transfer-Encoding: chunked
+Date: Mon, 08 May 2023 08:25:18 GMT
+
+{"output":"/bin/sh: null: command not found","rc":"127","status":"failed"}
+[Pipeline] }
