@@ -1,6 +1,6 @@
 insert_job: d2compaus_pa_dependency_job_hemap   
 job_type: CMD 
-command: echo "hello"
+command: ls /app/etl/palign/scripts/
 machine: amrvopsfa000001
 owner: SRVAMR-PALIGN
 permission: me,mx,ge,gx
