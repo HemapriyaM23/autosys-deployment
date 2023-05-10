@@ -1,4 +1,4 @@
-$ curl --user "SRVAMR-SFAOPS:0wO:v%He[a;_HzdFYkyKwS34g" -k -X POST -H 'Content-Type: text/plain' --upload-file 'test.jil' https://amraelp00011055.pfizer.com:9443/AEWS/jil -v
+$ curl -X POST -H "Content-Type: text/plain" --upload-file test.jil https://amraelp00011055.pfizer.com:9443/AEWS/jil -k --user "SRVAMR-SFAOPS:0wO:v%He[a;_HzdFYkyKwS34g" -i -v
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying 10.91.213.242:9443...
@@ -40,7 +40,7 @@ $ curl --user "SRVAMR-SFAOPS:0wO:v%He[a;_HzdFYkyKwS34g" -k -X POST -H 'Content-T
 > User-Agent: curl/7.87.0
 > Accept: */*
 > Content-Type: text/plain
-> Content-Length: 365
+> Content-Length: 152
 > Expect: 100-continue
 >
 { [5 bytes data]
@@ -53,8 +53,15 @@ $ curl --user "SRVAMR-SFAOPS:0wO:v%He[a;_HzdFYkyKwS34g" -k -X POST -H 'Content-T
 < HTTP/1.1 406
 < Content-Type: application/json
 < Transfer-Encoding: chunked
-< Date: Tue, 09 May 2023 13:18:26 GMT
+< Date: Wed, 10 May 2023 04:56:47 GMT
 <
 { [80 bytes data]
-100   439    0    74  100   365    290   1435 --:--:-- --:--:-- --:--:--  1763{"output":"/bin/sh: null: command not found","rc":"127","status":"failed"}
+100   226    0    74  100   152    274    563 --:--:-- --:--:-- --:--:--   852HTTP/1.1 100
+
+HTTP/1.1 406
+Content-Type: application/json
+Transfer-Encoding: chunked
+Date: Wed, 10 May 2023 04:56:47 GMT
+
+{"output":"/bin/sh: null: command not found","rc":"127","status":"failed"}
 * Connection #0 to host amraelp00011055.pfizer.com left intact
