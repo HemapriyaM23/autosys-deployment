@@ -1,0 +1,19 @@
+insert_job: D2COMPAUS_PA_HEMA_BOX   job_type: BOX 
+owner: SRVAMR-PALIGN
+permission: me,mx,gx,wx
+description: "hema's test job"
+alarm_if_fail: 0
+alarm_if_terminated: 0
+
+
+insert_job: d2compaus_pa_dependency_job_hemap1   job_type: CMD 
+box_name: D2COMPAUS_PA_HEMA_BOX
+command: echo 'hello'
+machine: amrvopsfa000001
+owner: SRVAMR-PALIGN
+permission: me,mx,ge,gx
+description: "This job is to run pfizer alignment engine's alignment module for scenario"
+std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+alarm_if_fail: 0
+alarm_if_terminated: 0
