@@ -23,7 +23,7 @@ pipeline {
 
 			// Get a list of JIL files in the directory
 			def jilFiles = sh(script: "find ${jilDirectory} -name '*.jil'", returnStdout: true).trim().split('\n')
-
+			echo $jilFiles
 			// Iterate over the JIL files and make POST requests
 			for (def jilFile in jilFiles) {
 				echo "Processing file: $jilFile"
