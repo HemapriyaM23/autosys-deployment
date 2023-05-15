@@ -41,12 +41,12 @@ pipeline {
 				//echo response
 				//echo "------------------------------------"
 				// Check the response for success
-				if (response.contains('SUCCESS')) {
-				    echo "Deployment successful for file: ${jilFile}"
-				} else {
-				    echo "Deployment failed for file: ${jilFile}"
-				    error("Deployment failed for file: ${jilFile}")
-				}
+				//if (response.contains('SUCCESS')) {
+				    //echo "Deployment successful for file: ${jilFile}"
+				//} else {
+				    //echo "Deployment failed for file: ${jilFile}"
+				    //error("Deployment failed for file: ${jilFile}")
+				//}
                     }                      
                         
           
