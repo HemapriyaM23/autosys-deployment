@@ -22,7 +22,7 @@ pipeline {
 			def apiEndpoint = 'https://amraelp00011055.pfizer.com:9443/AEWS/jil'
 
 			// Get a list of JIL files in the directory
-			def jilFiles = findFiles(glob: "${jilDirectory}/*.jil")
+			def jilFiles = sh(script: "find ${jilDirectory} -name '*.jil'", returnStdout: true).trim().split('\n')
 
 			// Iterate over the JIL files and make POST requests
 			for (def jilFile in jilFiles) {
