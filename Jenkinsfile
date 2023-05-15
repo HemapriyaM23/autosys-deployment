@@ -17,7 +17,7 @@ pipeline {
                         //sh 'ls -l ./script'
                         withCredentials([usernamePassword(credentialsId: 'sfaops', passwordVariable: 'pwd', usernameVariable: 'usr')]) {
 
-                        sh ''' curl -u "${usr}:${pwd}" -k -X GET https://amraelp00011055.pfizer.com:9443/AEWS/job/d2compaus_pa_dependency_job1 '''
+                        sh ''' curl -u \"${usr}:${pwd}\" -k -X GET https://amraelp00011055.pfizer.com:9443/AEWS/job/d2compaus_pa_dependency_job1 '''
                         //sh '''
                         //curl -X POST -H "Content-Type: text/plain" --upload-file "test.jil" https://amraelp00011055.pfizer.com:9443/AEWS/jil -k --user \"${usr}:${pwd}\" -i    
                         //'''
