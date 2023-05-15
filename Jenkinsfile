@@ -25,7 +25,7 @@ pipeline {
 			//def jilFiles = sh(script: "ls $jilDirectory/*.jil", returnStdout: true).trim().split('\n')
 
 			// Iterate over the JIL files and make POST requests
-			for file in $jil_directory/*.jil; do
+			for (def jilFile in $jil_directory/*.jil) {
 				echo "Processing file: $jilFile"
 				// Read the file content
 				//def jilContent = sh(script: "cat $jilFile", returnStdout: true).trim()
