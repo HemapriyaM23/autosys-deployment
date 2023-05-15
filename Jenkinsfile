@@ -13,20 +13,35 @@ pipeline {
             }
                 steps{
                     script{
+                        //withCredentials([usernamePassword(credentialsId: 'sfaops', passwordVariable: 'pwd', usernameVariable: 'usr')]) {
+                        //sh " curl -u \"${usr}:${pwd}\" -k -X GET https://amraelp00011055.pfizer.com:9443/AEWS/job/d2compaus_pa_dependency_job1
+                        //sh "curl -X POST -H 'Content-Type: text/plain' --upload-file "test.jil" https://amraelp00011055.pfizer.com:9443/AEWS/jil -k --user \"${usr}:${pwd}\" -i  "  
+						
+						
+						def jilDirectory = 'Autosys'
+						def apiEndpoint = 'https://amraelp00011055.pfizer.com:9443/AEWS/jil'
 
-                        //sh 'ls -l ./script'
-                        withCredentials([usernamePassword(credentialsId: 'sfaops', passwordVariable: 'pwd', usernameVariable: 'usr')]) {
+						// Get a list of JIL files in the directory
+						def jilFiles = sh(script: "ls $jilDirectory/*.jil", returnStdout: true).trim().split('\n')
 
-                        sh " curl -u \"${usr}:${pwd}\" -k -X GET https://amraelp00011055.pfizer.com:9443/AEWS/job/d2compaus_pa_dependency_job1 "
-                        //sh '''
-                        //curl -X POST -H "Content-Type: text/plain" --upload-file "test.jil" https://amraelp00011055.pfizer.com:9443/AEWS/jil -k --user \"${usr}:${pwd}\" -i    
-                        //'''
+						// Iterate over the JIL files and make POST requests
+						for (def jilFile in jilFiles) {
+							echo "Processing file: $jilFile"
+
+							// Read the file content
+							def jilContent = sh(script: "cat $jilFile", returnStdout: true).trim()
+
+							// Make the POST request using curl
+							withCredentials([usernamePassword(credentialsId: 'sfaops', passwordVariable: 'pwd', usernameVariable: 'usr')]) {
+							def response = sh(script: "curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilContent}' ${apiEndpoint}" -k --user \"${usr}:${pwd}\" -i , returnStdout: true).trim()
+							}
+
+							// Display the response
+							echo "Response:"
+							echo response
+							echo "------------------------------------"
+                    }                      
                         }
-                        //sh "ssh -i /var/lib/jenkins/.ssh/palign_id_rsa srvamr-palign@amer@amrvopsfa000001 'ls -l / '"
-                        //sh "scp  -i /var/lib/jenkins/.ssh/palign_id_rsa -r test.jil srvamr-palign@amer@amrvopsfa000001:/home/srvamr-palign/"
-                        //sh "ssh -i /var/lib/jenkins/.ssh/palign_id_rsa srvamr-palign@amer@amrvopsfa000001 'jil < /home/srvamr-palign/test.jil'"
-
-                        sh 'cat "/test.jil"'
           
                         }
                 }
