@@ -21,7 +21,7 @@ pipeline {
                         //sh "curl -X POST -H 'Content-Type: text/plain' --upload-file 'hemas_jil_filetxt.txt' https://amraelp00011055.pfizer.com:9443/AEWS/jil -k --user \"${usr}:${pwd}\" -i"  
                         
                         sh '''
-                        curl -X POST -H "Content-Type: text/plain" --upload-file "test.jil" https://amraelp00011055.pfizer.com:9443/AEWS/jil -k --user \"${usr}:${pwd}\" -i "   
+                        curl -X POST -H "Content-Type: text/plain" --upload-file "test.jil" https://amraelp00011055.pfizer.com:9443/AEWS/jil -k --user \"${usr}:${pwd}\" -i    
                         '''
                         }
                         //sh "ssh -i /var/lib/jenkins/.ssh/palign_id_rsa srvamr-palign@amer@amrvopsfa000001 'ls -l / '"
