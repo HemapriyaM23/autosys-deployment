@@ -22,17 +22,17 @@ pipeline {
 			def apiEndpoint = 'https://amraelp00011055.pfizer.com:9443/AEWS/jil'
 
 			// Get a list of JIL files in the directory
-			def jilFiles = sh(script: "ls $jilDirectory/*.jil", returnStdout: true).trim().split('\n')
+			//def jilFiles = sh(script: "ls $jilDirectory/*.jil", returnStdout: true).trim().split('\n')
 
 			// Iterate over the JIL files and make POST requests
-			for (def jilFile in jilFiles) {
+			for file in $jil_directory/*.jil; do
 				echo "Processing file: $jilFile"
 				// Read the file content
-				def jilContent = sh(script: "cat $jilFile", returnStdout: true).trim()
+				//def jilContent = sh(script: "cat $jilFile", returnStdout: true).trim()
 
 				// Make the POST request using curl
 				withCredentials([usernamePassword(credentialsId: 'sfaops', passwordVariable: 'pwd', usernameVariable: 'usr')]) {
-				def response = sh(script: "curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilContent}' ${apiEndpoint} -k --user \"${usr}:${pwd}\" -i" , returnStdout: true).trim()
+				def response = sh(script: "curl -X POST -H 'Content-Type: text/plain' --upload-file '${file}' ${apiEndpoint} -k --user \"${usr}:${pwd}\" -i" , returnStdout: true).trim()
 				}
 
 				// Display the response
