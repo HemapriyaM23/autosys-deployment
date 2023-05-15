@@ -23,13 +23,13 @@ pipeline {
 
 			// Get a list of JIL files in the directory
 			def jilFiles = sh(script: "find ${jilDirectory} -name '*.jil'", returnStdout: true).trim().split('\n')
-			echo jilFiles
+			echo "jilFiles is: ${jilFiles}"	
 			// Iterate over the JIL files and make POST requests
 			for (def jilFile in jilFiles) {
 				echo "Processing file: $jilFile"
 				// Read the file content
-				def jilContent = readFile(jilFile.toString())
-
+				def jilContent = readFile(file: jilFile.trim()).trim()
+				echo "jilContent is: ${jilContent}"	
 				// Make the POST request using curl
 				withCredentials([usernamePassword(credentialsId: 'sfaops', passwordVariable: 'pwd', usernameVariable: 'usr')]) {
 					def response = sh(script: "curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilFile}' ${apiEndpoint} -k --user \"${usr}:${pwd}\" -i" , returnStdout: true).trim()
