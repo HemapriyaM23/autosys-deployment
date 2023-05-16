@@ -1,10 +1,22 @@
-[root@ip-10-90-82-65 nginx]# certbot --nginx
 Saving debug log to /var/log/letsencrypt/letsencrypt.log
-Error while running nginx -c /etc/nginx/nginx.conf -t.
+Plugins selected: Authenticator nginx, Installer nginx
+Please enter the domain name(s) you would like on your certificate (comma and/or
+space separated) (Enter 'c' to cancel): www.sfajenkinshema.com
+Requesting a certificate for www.sfajenkinshema.com
+Performing the following challenges:
+http-01 challenge for www.sfajenkinshema.com
+Waiting for verification...
+Challenge failed for domain www.sfajenkinshema.com
+http-01 challenge for www.sfajenkinshema.com
 
-nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
-nginx: [emerg] socket() [::]:80 failed (97: Address family not supported by protocol)
-nginx: configuration file /etc/nginx/nginx.conf test failed
+Certbot failed to authenticate some domains (authenticator: nginx). The Certificate Authority reported these problems:
+  Domain: www.sfajenkinshema.com
+  Type:   dns
+  Detail: DNS problem: NXDOMAIN looking up A for www.sfajenkinshema.com - check that a DNS record exists for this domain; DNS problem: NXDOMAIN looking up AAAA for www.sfajenkinshema.com - check that a DNS record exists for this domain
 
-The nginx plugin is not working; there may be problems with your existing configuration.
-The error was: MisconfigurationError('Error while running nginx -c /etc/nginx/nginx.conf -t.\n\nnginx: the configuration file /etc/nginx/nginx.conf syntax is ok\nnginx: [emerg] socket() [::]:80 failed (97: Address family not supported by protocol)\nnginx: configuration file /etc/nginx/nginx.conf test failed\n',)
+Hint: The Certificate Authority failed to verify the temporary nginx configuration changes made by Certbot. Ensure the listed domains point to this nginx server and that it is accessible from the internet.
+
+Cleaning up challenges
+Some challenges have failed.
+Ask for help or search for solutions at https://community.letsencrypt.org. See the logfile /var/log/letsencrypt/letsencrypt.log or re-run Certbot with -v for more details.
+[root@ip-10-90-82-65 nginx]#
