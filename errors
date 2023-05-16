@@ -1,15 +1,10 @@
-+ curl -X POST -H 'Content-Type: text/plain' --upload-file hemas_jil_filetxt.txt https://amraelp00011055.pfizer.com:9443/AEWS/jil -k --user 'amer\SRVAMR-SFAOPS:****' -i
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
+[root@ip-10-90-82-65 nginx]# certbot --nginx
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Error while running nginx -c /etc/nginx/nginx.conf -t.
 
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100   706    0    74  100   632    104    888 --:--:-- --:--:-- --:--:--   991
-HTTP/1.1 100 
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: [emerg] socket() [::]:80 failed (97: Address family not supported by protocol)
+nginx: configuration file /etc/nginx/nginx.conf test failed
 
-HTTP/1.1 406 
-Content-Type: application/json
-Transfer-Encoding: chunked
-Date: Thu, 11 May 2023 07:41:05 GMT
-
-{"output":"/bin/sh: null: command not found","rc":"127","status":"failed"}
+The nginx plugin is not working; there may be problems with your existing configuration.
+The error was: MisconfigurationError('Error while running nginx -c /etc/nginx/nginx.conf -t.\n\nnginx: the configuration file /etc/nginx/nginx.conf syntax is ok\nnginx: [emerg] socket() [::]:80 failed (97: Address family not supported by protocol)\nnginx: configuration file /etc/nginx/nginx.conf test failed\n',)
