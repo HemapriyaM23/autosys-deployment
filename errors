@@ -62,3 +62,14 @@ server {
     server_name your_jenkins_domain.com;
     return 301 https://$host$request_uri;
 }
+
+May 17 03:46:00 ip-10-90-82-65.eu-west-1.compute.internal nginx[1010591]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+May 17 03:46:00 ip-10-90-82-65.eu-west-1.compute.internal nginx[1010593]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+May 17 03:46:00 ip-10-90-82-65.eu-west-1.compute.internal nginx[1010593]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+May 17 03:46:01 ip-10-90-82-65.eu-west-1.compute.internal nginx[1010593]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+May 17 03:46:01 ip-10-90-82-65.eu-west-1.compute.internal nginx[1010593]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+May 17 03:46:02 ip-10-90-82-65.eu-west-1.compute.internal nginx[1010593]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+May 17 03:46:02 ip-10-90-82-65.eu-west-1.compute.internal nginx[1010593]: nginx: [emerg] still could not bind()
+May 17 03:46:02 ip-10-90-82-65.eu-west-1.compute.internal systemd[1]: nginx.service: Control process exited, code=exited status=1
+May 17 03:46:02 ip-10-90-82-65.eu-west-1.compute.internal systemd[1]: nginx.service: Failed with result 'exit-code'.
+May 17 03:46:02 ip-10-90-82-65.eu-west-1.compute.internal systemd[1]: Failed to start The nginx HTTP and reverse proxy server.
