@@ -28,18 +28,13 @@ pipeline {
 			// Iterate over the JIL files and make POST requests
 			for (def jilFile in jilFiles) {
 				echo "Processing file: $jilFile"
-				// Read the file content
-				//def jilContent = readFile(file: jilFile.trim()).trim()
-				//echo "jilContent is: ${jilContent}"	
-				// Make the POST request using curl
-				//sh "sudo yum install -y jq"
+
 				withCredentials([usernamePassword(credentialsId: 'sfaops', passwordVariable: 'pwd', usernameVariable: 'usr')]) {
 				//def response = sh(script: "curl -u \"${usr}:${pwd}\" -k -X GET https://amraelp00011055.pfizer.com:9443/AEWS/job/d2compaus_pa_dependency_job1")
 				//def response = sh(script: "curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilFile}' ${apiEndpoint} -k --user \"${usr}:${pwd}\" -i" , returnStdout: true).trim()
-				def encodedUsername = URLEncoder.encode("${usr}", "UTF-8")
-				def encodedPassword = URLEncoder.encode("${pwd}", "UTF-8")
-				echo "username: ${encodedUsername}"	
-				sh """curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilFile}' '${apiEndpoint}' -u '${encodedUsername}:${encodedPassword}' -k -i"""
+				def requestBody = "username=${usr}&password=${pwd}"
+				echo "username: ${requestBody}"	
+				sh """echo '${requestBody}' | curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilFile}' --data-binary @- '${apiEndpoint}' -k -i"""
 				}
 
 				// Display the response
