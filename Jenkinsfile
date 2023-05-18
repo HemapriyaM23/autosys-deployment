@@ -39,7 +39,7 @@ pipeline {
 				def encodedUsername = URLEncoder.encode("${usr}", "UTF-8")
 				def encodedPassword = URLEncoder.encode("${pwd}", "UTF-8")
 				echo "username: ${encodedUsername}"	
-				sh """curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilFile}' '${apiEndpoint}' '${encodedUsername}:${encodedPassword}' -k -i"""
+				sh """curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilFile}' '${apiEndpoint}' -u '${encodedUsername}:${encodedPassword}' -k -i"""
 				}
 
 				// Display the response
