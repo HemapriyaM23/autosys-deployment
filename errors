@@ -1,119 +1,13 @@
-openssl genpkey -algorithm RSA -out private_key.key -pkeyopt rsa_keygen_bits:2048
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
 
-openssl req -new -key private_key.key -out csr.csr
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100   686    0    74  100   612     89    741 --:--:-- --:--:-- --:--:--   832
+HTTP/1.1 100 
 
-openssl req -x509 -sha256 -days 365 -key private_key.key -in csr.csr -out certificate.crt
+HTTP/1.1 406 
+Content-Type: application/json
+Transfer-Encoding: chunked
+Date: Mon, 15 May 2023 10:34:25 GMT
 
-
-openssl x509 -in certificate.crt -text -noout
-
-
-
-server {
-  listen 80;
-  server_name your_domain.com;
-
-  return 301 https://$host$request_uri;
-}
-
-server {
-  listen 443 ssl;
-  server_name your_domain.com;
-
-  ssl_certificate /path/to/ssl/certificate;
-  ssl_certificate_key /path/to/ssl/private_key;
-
-  location / {
-    proxy_set_header        Host $host;
-    proxy_set_header        X-Real-IP $remote_addr;
-    proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header        X-Forwarded-Proto $scheme;
-
-    proxy_pass              http://localhost:<desired_https_port>;
-    proxy_read_timeout      90;
-  }
-}
-
-
-
-
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/private.key -out /etc/nginx/ssl/certificate.crt
-
-server {
-    listen 443;
-    server_name your_jenkins_domain.com;
-    ssl on;
-    ssl_certificate /path/to/certificate.crt;
-    ssl_certificate_key /path/to/private.key;
-
-    location / {
-        proxy_pass http://localhost:8080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_redirect http:// https://;
-    }
-}
-
-
-server {
-    listen 80;
-    server_name your_jenkins_domain.com;
-    return 301 https://$host$request_uri;
-}
-
-Install Nginx:
-
-If you haven't already, install Nginx on your server. The installation process can vary depending on your operating system. You can refer to the official Nginx documentation for detailed instructions.
-Generate SSL/TLS certificates:
-
-Use OpenSSL to generate SSL/TLS certificates for your Jenkins server. You can use a self-signed certificate or obtain a trusted certificate from a Certificate Authority (CA).
-Here's an example command to generate a self-signed certificate:
-vbnet
-Copy code
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /path/to/private.key -out /path/to/certificate.crt
-Make sure to replace /path/to/private.key and /path/to/certificate.crt with the actual paths where you want to store your private key and certificate.
-Configure Nginx for HTTPS:
-
-Open the Nginx configuration file, typically located at /etc/nginx/nginx.conf or /etc/nginx/sites-available/default.
-Add a server block to listen on port 443 and handle HTTPS requests. Here's an example configuration:
-nginx
-Copy code
-server {
-    listen 443;
-    server_name your_jenkins_domain.com;
-    ssl on;
-    ssl_certificate /path/to/certificate.crt;
-    ssl_certificate_key /path/to/private.key;
-
-    location / {
-        proxy_pass http://localhost:8080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_redirect http:// https://;
-    }
-}
-Make sure to replace your_jenkins_domain.com with the actual domain or IP address of your Jenkins server. Also, adjust the paths to the SSL certificate and private key files.
-Configure Nginx for HTTP redirection:
-
-Open the Nginx configuration file again.
-Add a server block to listen on port 80 and redirect HTTP requests to HTTPS. Here's an example configuration:
-nginx
-Copy code
-server {
-    listen 80;
-    server_name your_jenkins_domain.com;
-    return 301 https://$host$request_uri;
-}
-Again, replace your_jenkins_domain.com with your Jenkins server's domain or IP address.
-Save the Nginx configuration file and restart Nginx:
-
-Save the changes you made to the Nginx configuration file.
-Restart Nginx to apply the new configuration. The command to restart Nginx may vary depending on your operating system. For example, on Ubuntu, you can use sudo systemctl restart nginx.
-Test the setup:
-
-Access your Jenkins server using the HTTPS URL (e.g., https://your_jenkins_domain.com) in a web browser. The requests should be automatically redirected from HTTP to HTTPS.
-That's it! You have now rerouted HTTP to HTTPS for Jenkins using OpenSSL and Nginx.
+{"output":"/bin/sh: null: command not found","rc":"127","status":"failed"}
