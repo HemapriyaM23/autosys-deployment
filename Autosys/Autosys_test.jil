@@ -1,4 +1,4 @@
-insert_job: D2COMPAUS_PA_HEMA_BOX_test2  job_type: BOX 
+insert_job: D2COMPAUS_PA_HEMA_BOX_test3  job_type: BOX 
 owner: SRVAMR-PALIGN
 permission: me,mx,gx,wx
 description: "hema test job"
@@ -6,7 +6,7 @@ alarm_if_fail: 0
 alarm_if_terminated: 0
 
 
-insert_job: d2compaus_pa_dependency_job_hemap_test2   job_type: CMD 
+insert_job: d2compaus_pa_dependency_job_hemap_test3   job_type: CMD 
 box_name: D2COMPAUS_PA_HEMA_BOX
 command: echo 'hello'
 machine: amrvopsfa000001
