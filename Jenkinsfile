@@ -35,7 +35,7 @@ pipeline {
 				
 					//sh """curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilFile}' ${apiEndpoint} -k --user \"${usr}:${pwd}\" -i"""
 					// Check if the response contains a success indicator (modify this condition based on your specific response format)
-        				if (response.contains('success')) {
+        				if (response.contains('status:success')) {
             					echo "Operation successful"
             					currentBuild.result = 'SUCCESS' // Update Jenkins job as success
         				} else {
@@ -44,7 +44,7 @@ pipeline {
         				}
         
 					// Print the response
-					//echo "Response: $response"
+					echo "Response: $response"
 
 				}
 				
