@@ -33,7 +33,9 @@ pipeline {
 				
 					def response = sh(script: "curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilFile}' ${apiEndpoint} -k --user \"${usr}:${pwd}\" -i" , returnStdout: true).trim()
 					// Parse the JSON response
-					def jsonResponse = readJSON(text: response)
+					def jsonSlurper = new JsonSlurper()
+        				def jsonResponse = jsonSlurper.parseText(response)
+					
 
 					// Check the status in the JSON response
 					if (jsonResponse.status == 'failed') {
