@@ -31,24 +31,21 @@ pipeline {
 
 				withCredentials([usernamePassword(credentialsId: 'sfaops', passwordVariable: 'pwd', usernameVariable: 'usr')]) {
 				
-					def response = sh(script: "curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilFile}' ${apiEndpoint} -k --user \"${usr}:${pwd}\" -i" , returnStdout: true).trim()
-					// Parse the JSON response
-					def jsonSlurper = new groovy.json.JsonSlurperClassic()
-        				def jsonResponse = jsonSlurper.parseText(response)
-					
+					//def response = sh(script: "curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilFile}' ${apiEndpoint} -k --user \"${usr}:${pwd}\" -i" , returnStdout: true).trim()
+					def curlCommand = """curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilFile}' ${apiEndpoint} -k --user \"${usr}:${pwd}\" -i"""
+					def curlOutput = sh(script: curlCommand, returnStdout: true, returnStatus: true)
 
-					// Check the status in the JSON response
-					if (jsonResponse.status == 'failed') {
-					    echo "Operation failed"
-					    currentBuild.result = 'FAILURE' // Update Jenkins job as failed
-					} else {
+					// Check the exit code of the curl command
+					if (curlOutput == 0) {
 					    echo "Operation successful"
 					    currentBuild.result = 'SUCCESS' // Update Jenkins job as success
+					} else {
+					    echo "Operation failed"
+					    currentBuild.result = 'FAILURE' // Update Jenkins job as failed
 					}
 
-        
 					// Print the response
-					echo "Response: $response"
+					echo "Curl output: $curlOutput"
 
 				}
 				
