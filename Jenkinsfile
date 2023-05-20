@@ -32,16 +32,18 @@ pipeline {
 				withCredentials([usernamePassword(credentialsId: 'sfaops', passwordVariable: 'pwd', usernameVariable: 'usr')]) {
 				
 					def response = sh(script: "curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilFile}' ${apiEndpoint} -k --user \"${usr}:${pwd}\" -i" , returnStdout: true).trim()
-				
-					//sh """curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilFile}' ${apiEndpoint} -k --user \"${usr}:${pwd}\" -i"""
-					// Check if the response contains a success indicator (modify this condition based on your specific response format)
-        				if (response.contains('"status":"success"')) {
-            					echo "Operation successful"
-            					currentBuild.result = 'SUCCESS' // Update Jenkins job as success
-        				} else {
-            					echo "Operation failed"
-            					currentBuild.result = 'FAILURE' // Update Jenkins job as failed
-        				}
+					// Parse the JSON response
+					def jsonResponse = readJSON(text: response)
+
+					// Check the status in the JSON response
+					if (jsonResponse.status == 'failed') {
+					    echo "Operation failed"
+					    currentBuild.result = 'FAILURE' // Update Jenkins job as failed
+					} else {
+					    echo "Operation successful"
+					    currentBuild.result = 'SUCCESS' // Update Jenkins job as success
+					}
+
         
 					// Print the response
 					echo "Response: $response"
