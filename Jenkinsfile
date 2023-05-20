@@ -32,20 +32,26 @@ pipeline {
 				withCredentials([usernamePassword(credentialsId: 'sfaops', passwordVariable: 'pwd', usernameVariable: 'usr')]) {
 				
 					//def response = sh(script: "curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilFile}' ${apiEndpoint} -k --user \"${usr}:${pwd}\" -i" , returnStdout: true).trim()
-					def curlCommand = """curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilFile}' ${apiEndpoint} -k --user \"${usr}:${pwd}\" -i"""
-					def curlOutput = sh(script: curlCommand, returnStdout: true, returnStatus: true)
+					def response = sh(script: """curl -X POST -H 'Content-Type: text/plain' --upload-file '${jilFile}' ${apiEndpoint} -k --user \"${usr}:${pwd}\" -i""", returnStdout: true)
 
-					// Check the exit code of the curl command
-					if (curlOutput == 0) {
-					    echo "Operation successful"
-					    currentBuild.result = 'SUCCESS' // Update Jenkins job as success
+					// Extract the value of the "status" field from the JSON response
+					def statusMatch = response =~ /"status"\s*:\s*"(\w+)"/
+					if (statusMatch) {
+					    def status = statusMatch[0][1]
+					    if (status == 'failed') {
+						echo "Operation failed"
+						currentBuild.result = 'FAILURE' // Update Jenkins job as failed
+					    } else {
+						echo "Operation successful"
+						currentBuild.result = 'SUCCESS' // Update Jenkins job as success
+					    }
 					} else {
-					    echo "Operation failed"
-					    currentBuild.result = 'FAILURE' // Update Jenkins job as failed
+					    echo "Unable to determine the status from the response"
+					    currentBuild.result = 'FAILURE' // Set Jenkins job as failed if status extraction fails
 					}
 
 					// Print the response
-					echo "Curl output: $curlOutput"
+					echo "Response: $response"
 
 				}
 				
