@@ -44,7 +44,7 @@ pipeline {
         				}
         
 					// Print the response
-					echo "Response: $response"
+					//echo "Response: $response"
 
 				}
 				
