@@ -13,7 +13,7 @@ pipeline {
             }
             steps{
 
-		sh '/var/lib/jenkins/workspace/dbox_test_autosys_deployment_dev/script/deploy.sh'
+		sh 'deploy.sh'
 												 				
                 }
 				
