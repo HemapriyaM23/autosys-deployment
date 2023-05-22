@@ -36,10 +36,10 @@ pipeline {
 					if (statusMatch) {
 					    def status = statusMatch[0][1]
 					    if (status == 'failed') {
-						echo "Operation failed"
+						echo "Deployment of $jilFile is failed"
 						currentBuild.result = 'FAILURE' // Update Jenkins job as failed
 					    } else {
-						echo "Operation successful"
+						echo "Deployment of $jilFile is Successfull"
 						currentBuild.result = 'SUCCESS' // Update Jenkins job as success
 					    }
 					} else {
