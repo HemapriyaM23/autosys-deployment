@@ -13,7 +13,7 @@ pipeline {
             }
             steps{
 
-		sh 'deploy.sh'
+		sh 'script/deploy.sh'
 												 				
                 }
 				
