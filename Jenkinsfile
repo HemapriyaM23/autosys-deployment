@@ -15,7 +15,7 @@ pipeline {
 		sh 'pwd'
 		sh 'chmod +x script/deploy.sh'    
 		sh 'ls -la script/'    
-		//sh 'script/deploy.sh'
+		sh 'script/deploy.sh'
 												 				
                 }
 				
