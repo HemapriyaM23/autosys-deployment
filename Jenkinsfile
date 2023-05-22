@@ -13,6 +13,7 @@ pipeline {
             }
             steps{
 		sh 'pwd'
+		sh 'chmod +x script/deploy.sh'    
 		sh 'ls -la script/'    
 		//sh 'script/deploy.sh'
 												 				
