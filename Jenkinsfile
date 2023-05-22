@@ -13,7 +13,7 @@ pipeline {
             }
             steps{
 		sh 'pwd'
-		sh 'ls -la .'    
+		sh 'ls -la script/'    
 		//sh 'script/deploy.sh'
 												 				
                 }
