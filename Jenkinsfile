@@ -19,7 +19,8 @@ pipeline {
 			export Username=\$usr
 			export Password=\$pwd
 			script/deploy.sh'
-			"""									 				
+			"""	
+		}
                 }
 				
         }
