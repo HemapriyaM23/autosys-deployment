@@ -1,4 +1,4 @@
-insert_job: D2COMPAUS_PA_HEMA_BOX_test8   job_type: BOX 
+update_job: D2COMPAUS_PA_HEMA_BOX_test8   job_type: BOX 
 owner: SRVAMR-PALIGN
 permission: me,mx,gx,wx
 description: "hema test job"
