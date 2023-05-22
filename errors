@@ -1,13 +1,2 @@
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100   686    0    74  100   612     89    741 --:--:-- --:--:-- --:--:--   832
-HTTP/1.1 100 
-
-HTTP/1.1 406 
-Content-Type: application/json
-Transfer-Encoding: chunked
-Date: Mon, 15 May 2023 10:34:25 GMT
-
-{"output":"/bin/sh: null: command not found","rc":"127","status":"failed"}
+ script/deploy.sh
+/var/lib/jenkins/workspace/dbox_test_autosys_deployment_dev@tmp/durable-ba96d4ad/script.sh: line 1: script/deploy.sh: Permission denied
