@@ -12,8 +12,9 @@ pipeline {
                  expression { params.Deploy_to_Autosys == "Yes" }
             }
             steps{
-
-		sh 'script/deploy.sh'
+		sh 'pwd'
+		sh 'ls -la .'    
+		//sh 'script/deploy.sh'
 												 				
                 }
 				
