@@ -1,3 +1,1 @@
-Warning: A secret was passed to "withEnv" using Groovy String interpolation, which is insecure.
-		 Affected argument(s) used the following variable(s): [PASSWORD]
-		 See https://jenkins.io/redirect/groovy-string-interpolation for details.
+/var/lib/jenkins/workspace/dbox_test_autosys_deployment_dev@tmp/durable-6775d7a3/script.sh: line 2: syntax error near unexpected token `('
