@@ -5,11 +5,11 @@ apiEndpoint='https://amraelp00011055.pfizer.com:9443/AEWS/jil'
 failedFiles=() # Array to store failed JIL files
 successfulFiles=() # Array to store successful JIL files
 
-USERNAME="$USERNAME"
-PASSWORD="$PASSWORD"
+USERNAME="${USERNAME}"
+PASSWORD="${USERNAME}"
 
-echo "Username: $USERNAME"
-echo "Username: $PASSWORD"
+echo "Username: ${USERNAME}"
+echo "Username: ${USERNAME}"
 
 # Get a list of JIL files in the directory
 jilFiles=$(find ${jilDirectory} -name '*.jil')
