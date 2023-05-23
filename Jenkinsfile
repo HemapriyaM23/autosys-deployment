@@ -18,7 +18,7 @@ pipeline {
         			env.PASSWORD = credentials('sfaops')
         			env.USERNAME = username('sfaops')
 				script/deploy.sh"""
-			}
+			
 		}
             }
 				
