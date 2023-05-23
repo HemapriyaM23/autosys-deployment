@@ -15,11 +15,7 @@ pipeline {
 		
 		sh 'chmod +x script/deploy.sh' 
 		withCredentials([usernamePassword(credentialsId: 'sfaops', passwordVariable: 'pwd', usernameVariable: 'usr')]) {
-			sh """
-			export Username=\$usr
-			export Password=\$pwd
-			script/deploy.sh
-			"""	
+			sh "script/deploy.sh $usr $pwd"
 		}
                 }
 				
