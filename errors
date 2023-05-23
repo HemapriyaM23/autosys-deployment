@@ -1,2 +1,3 @@
- script/deploy.sh
-/var/lib/jenkins/workspace/dbox_test_autosys_deployment_dev@tmp/durable-ba96d4ad/script.sh: line 1: script/deploy.sh: Permission denied
+Warning: A secret was passed to "withEnv" using Groovy String interpolation, which is insecure.
+		 Affected argument(s) used the following variable(s): [PASSWORD]
+		 See https://jenkins.io/redirect/groovy-string-interpolation for details.
