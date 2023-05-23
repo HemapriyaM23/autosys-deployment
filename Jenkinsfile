@@ -14,8 +14,10 @@ pipeline {
             steps{		
 		sh 'chmod +x script/deploy.sh' 
 		withCredentials([usernamePassword(credentialsId: 'sfaops', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-			withEnv(["USERNAME=${env.USERNAME}", "PASSWORD=${env.PASSWORD}"]) {
-				sh "script/deploy.sh"
+        		sh """
+        			env.PASSWORD = credentials('sfaops')
+        			env.USERNAME = username('sfaops')
+				script/deploy.sh"""
 			}
 		}
             }
