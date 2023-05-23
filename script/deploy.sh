@@ -4,10 +4,12 @@ jilDirectory='Autosys'
 apiEndpoint='https://amraelp00011055.pfizer.com:9443/AEWS/jil'
 failedFiles=() # Array to store failed JIL files
 successfulFiles=() # Array to store successful JIL files
-Username="$1"
-Password="$2"
-echo "Username: $Username"
-echo "Username: $Password"
+
+USERNAME="$USERNAME"
+PASSWORD="$PASSWORD"
+
+echo "Username: $USERNAME"
+echo "Username: $PASSWORD"
 
 # Get a list of JIL files in the directory
 jilFiles=$(find ${jilDirectory} -name '*.jil')
@@ -17,7 +19,7 @@ for jilFile in ${jilFiles}; do
     echo "Processing file: ${jilFile}"
     
     # Perform the curl command
-    response=$(curl -X POST -H 'Content-Type: text/plain' --upload-file "${jilFile}" ${apiEndpoint} -k --user "${Username}:${Password}" -i)
+    response=$(curl -X POST -H 'Content-Type: text/plain' --upload-file "${jilFile}" ${apiEndpoint} -k --user "${USERNAME}:${PASSWORD}" -i)
     
     # Print the response
     echo "Response: ${response}"
