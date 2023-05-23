@@ -6,8 +6,6 @@ successfulFiles=() # Array to store successful JIL files
 USERNAME="${USERNAME}"
 PASSWORD="${PASSWORD}"
 
-
-
 # Get a list of JIL files in the directory
 jilFiles=$(find ${jilDirectory} -name '*.jil')
 
