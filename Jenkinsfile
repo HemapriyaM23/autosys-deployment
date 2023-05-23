@@ -11,16 +11,14 @@ pipeline {
             when {
                  expression { params.Deploy_to_Autosys == "Yes" }
             }
-            steps{
-		
+            steps{		
 		sh 'chmod +x script/deploy.sh' 
 		withCredentials([usernamePassword(credentialsId: 'sfaops', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
 			withEnv(["USERNAME=${env.USERNAME}", "PASSWORD=${env.PASSWORD}"]) {
-            
 				sh "script/deploy.sh"
 			}
 		}
-                }
+            }
 				
         }
     }
