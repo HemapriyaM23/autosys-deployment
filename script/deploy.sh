@@ -1,7 +1,5 @@
 #!/bin/bash
 
-jilDirectory='Autosys'
-apiEndpoint='https://amraelp00011055.pfizer.com:9443/AEWS/jil'
 failedFiles=() # Array to store failed JIL files
 successfulFiles=() # Array to store successful JIL files
 
