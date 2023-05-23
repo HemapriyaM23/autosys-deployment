@@ -1,0 +1,398 @@
+
+/* ----------------- D2COMPAUS_PA_BTCH_UPLD_BUSVL ----------------- */ 
+
+update_job: D2COMPAUS_PA_BTCH_UPLD_BUSVL   job_type: BOX 
+owner: SRVAMR-PALIGN
+permission: me,mx,gx,wx
+date_conditions: 0
+days_of_week: all
+start_mins: 0,10,20,30,40,50
+condition: v(D2EPSWLA_GV_MASTER_MAINT_WINDOW) = "RAMPUP"
+box_success: s(d2compaus_pa_btch_upld_busvl_box_cls)
+box_failure: f(d2compaus_pa_btch_upld_busvl_sleep)
+description: "JOB BOX FOR BATCH UPLOAD"
+alarm_if_fail: 0
+alarm_if_terminated: 0
+
+
+ /* ----------------- d2compaus_pa_btch_upld_busvl_box_opn ----------------- */ 
+
+ update_job: d2compaus_pa_btch_upld_busvl_box_opn   job_type: CMD 
+ box_name: D2COMPAUS_PA_BTCH_UPLD_BUSVL
+ command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_postgresql_master.ksh PALIGN DEV FUNCTION "'BUSVL_FLOW_STARTED'"
+ machine: amrvopsfa000001
+ owner: SRVAMR-PALIGN
+ permission: me,mx,ge,gx
+ date_conditions: 0
+ description: "Busvl flow started"
+ std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+ std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+ alarm_if_fail: 0
+ alarm_if_terminated: 0
+ send_notification: F
+ notification_template: "ALARM_TEMPLATE"
+ notification_emailaddress: anand.kumar@pfizer.com
+ notification_emailaddress: madhushree.m@pfizer.com
+ notification_emailaddress: sachinthadakmanlu.sathyanarayana@pfizer.com
+ notification_emailaddress: devesh.tikyani@pfizer.com
+ notification_emailaddress: pradumna.tamkute@pfizer.com
+ notification_emailaddress: prateek.arora@pfizer.com
+ notification_emailaddress: ameer.nowsathbabu@pfizer.com
+
+
+ /* ----------------- d2compaus_pa_busvl_ck_mul_ent_ldst_pkg ----------------- */ 
+
+ update_job: d2compaus_pa_busvl_ck_mul_ent_ldst_pkg   job_type: CMD 
+ box_name: D2COMPAUS_PA_BTCH_UPLD_BUSVL
+ command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_postgresql_master.ksh PALIGN DEV FUNCTION "pfzalgn_ctrl.pa_sp_chck_mul_ent_loadset_pkg()"
+ machine: amrvopsfa000001
+ owner: SRVAMR-PALIGN
+ permission: me,mx,ge,gx
+ date_conditions: 0
+ condition: s(d2compaus_pa_btch_upld_busvl_box_opn)
+ description: "Batch Upload check for multiple entries of loadset in loadset package table"
+ std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+ std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+ alarm_if_fail: 0
+ alarm_if_terminated: 0
+ send_notification: F
+ notification_template: "ALARM_TEMPLATE"
+ success_codes: 0,14
+ notification_emailaddress: anand.kumar@pfizer.com
+ notification_emailaddress: madhushree.m@pfizer.com
+ notification_emailaddress: sachinthadakmanlu.sathyanarayana@pfizer.com
+ notification_emailaddress: devesh.tikyani@pfizer.com
+ notification_emailaddress: pradumna.tamkute@pfizer.com
+ notification_emailaddress: prateek.arora@pfizer.com
+ notification_emailaddress: ameer.nowsathbabu@pfizer.com
+
+
+ /* ----------------- d2compaus_pa_busvl_upd_pkg_busvl_proc ----------------- */ 
+
+ update_job: d2compaus_pa_busvl_upd_pkg_busvl_proc   job_type: CMD 
+ box_name: D2COMPAUS_PA_BTCH_UPLD_BUSVL
+ command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_postgresql_master.ksh PALIGN DEV FUNCTION "pfzalgn_ctrl.pa_sp_upd_loadset_pkg('BUSVL','PROC')"
+ machine: amrvopsfa000001
+ owner: SRVAMR-PALIGN
+ permission: me,mx,ge,gx
+ date_conditions: 0
+ condition: e(d2compaus_pa_busvl_ck_mul_ent_ldst_pkg) = 0
+ description: "Batch Upload update loadset package table to BUSVL and PROC"
+ std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+ std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+ alarm_if_fail: 0
+ alarm_if_terminated: 0
+ send_notification: F
+ notification_template: "ALARM_TEMPLATE"
+ notification_emailaddress: anand.kumar@pfizer.com
+ notification_emailaddress: madhushree.m@pfizer.com
+ notification_emailaddress: sachinthadakmanlu.sathyanarayana@pfizer.com
+ notification_emailaddress: devesh.tikyani@pfizer.com
+ notification_emailaddress: pradumna.tamkute@pfizer.com
+ notification_emailaddress: prateek.arora@pfizer.com
+ notification_emailaddress: ameer.nowsathbabu@pfizer.com
+
+
+ /* ----------------- d2compaus_pa_busvl_cre_scn_tbl ----------------- */ 
+
+ update_job: d2compaus_pa_busvl_cre_scn_tbl   job_type: CMD 
+ box_name: D2COMPAUS_PA_BTCH_UPLD_BUSVL
+ command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_postgresql_master.ksh PALIGN DEV FUNCTION "pfzalgn_stg.pa_sp_scn_entity_ins()"
+ machine: amrvopsfa000001
+ owner: SRVAMR-PALIGN
+ permission: me,mx,ge,gx
+ date_conditions: 0
+ condition: s(d2compaus_pa_busvl_upd_pkg_busvl_proc)
+ description: "Batch Upload create scenario tables and job control scenerio table load status."
+ std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+ std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+ alarm_if_fail: 0
+ alarm_if_terminated: 0
+ send_notification: F
+ notification_template: "ALARM_TEMPLATE"
+ notification_emailaddress: anand.kumar@pfizer.com
+ notification_emailaddress: madhushree.m@pfizer.com
+ notification_emailaddress: sachinthadakmanlu.sathyanarayana@pfizer.com
+ notification_emailaddress: devesh.tikyani@pfizer.com
+ notification_emailaddress: pradumna.tamkute@pfizer.com
+ notification_emailaddress: prateek.arora@pfizer.com
+ notification_emailaddress: ameer.nowsathbabu@pfizer.com
+
+
+ /* ----------------- d2compaus_pa_busvl_opn_btch ----------------- */ 
+
+ update_job: d2compaus_pa_busvl_opn_btch   job_type: CMD 
+ box_name: D2COMPAUS_PA_BTCH_UPLD_BUSVL
+ command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_postgresql_master.ksh PALIGN DEV FUNCTION "pfzalgn_ctrl.pa_sp_algn_loadset_scn_batch('BATCH_GEN')"
+ machine: amrvopsfa000001
+ owner: SRVAMR-PALIGN
+ permission: me,mx,ge,gx
+ date_conditions: 0
+ condition: s(d2compaus_pa_busvl_cre_scn_tbl)
+ description: "Business validation open batch"
+ std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+ std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+ alarm_if_fail: 0
+ alarm_if_terminated: 0
+ send_notification: F
+ notification_template: "ALARM_TEMPLATE"
+ notification_emailaddress: anand.kumar@pfizer.com
+ notification_emailaddress: madhushree.m@pfizer.com
+ notification_emailaddress: sachinthadakmanlu.sathyanarayana@pfizer.com
+ notification_emailaddress: devesh.tikyani@pfizer.com
+ notification_emailaddress: pradumna.tamkute@pfizer.com
+ notification_emailaddress: prateek.arora@pfizer.com
+ notification_emailaddress: ameer.nowsathbabu@pfizer.com
+
+
+ /* ----------------- d2compaus_pa_busvl_ins_algn_jb_ctrl_tm ----------------- */ 
+
+ update_job: d2compaus_pa_busvl_ins_algn_jb_ctrl_tm   job_type: CMD 
+ box_name: D2COMPAUS_PA_BTCH_UPLD_BUSVL
+ command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_postgresql_master.ksh PALIGN DEV FUNCTION "pfzalgn_ctrl.pa_sp_algn_job_control_team()"
+ machine: amrvopsfa000001
+ owner: SRVAMR-PALIGN
+ permission: me,mx,ge,gx
+ date_conditions: 0
+ condition: s(d2compaus_pa_busvl_opn_btch)
+ description: "Batch Upload populate data in align job control team"
+ std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+ std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+ alarm_if_fail: 0
+ alarm_if_terminated: 0
+ send_notification: F
+ notification_template: "ALARM_TEMPLATE"
+ notification_emailaddress: anand.kumar@pfizer.com
+ notification_emailaddress: madhushree.m@pfizer.com
+ notification_emailaddress: sachinthadakmanlu.sathyanarayana@pfizer.com
+ notification_emailaddress: devesh.tikyani@pfizer.com
+ notification_emailaddress: pradumna.tamkute@pfizer.com
+ notification_emailaddress: prateek.arora@pfizer.com
+ notification_emailaddress: ameer.nowsathbabu@pfizer.com
+
+
+ /* ----------------- d2compaus_pa_busvl_cre_mrg_tbl_vw ----------------- */ 
+
+ update_job: d2compaus_pa_busvl_cre_mrg_tbl_vw   job_type: CMD 
+ box_name: D2COMPAUS_PA_BTCH_UPLD_BUSVL
+ command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_postgresql_master.ksh PALIGN DEV FUNCTION "pfzalgn_ctrl.pa_sp_batch_upload_run()"
+ machine: amrvopsfa000001
+ owner: SRVAMR-PALIGN
+ permission: me,mx,ge,gx
+ date_conditions: 0
+ condition: s(d2compaus_pa_busvl_ins_algn_jb_ctrl_tm)
+ description: "Batch Upload create merge table and views"
+ std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+ std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+ alarm_if_fail: 0
+ alarm_if_terminated: 0
+ send_notification: F
+ notification_template: "ALARM_TEMPLATE"
+ notification_emailaddress: anand.kumar@pfizer.com
+ notification_emailaddress: madhushree.m@pfizer.com
+ notification_emailaddress: sachinthadakmanlu.sathyanarayana@pfizer.com
+ notification_emailaddress: devesh.tikyani@pfizer.com
+ notification_emailaddress: pradumna.tamkute@pfizer.com
+ notification_emailaddress: prateek.arora@pfizer.com
+ notification_emailaddress: ameer.nowsathbabu@pfizer.com
+
+
+ /* ----------------- d2compaus_pa_busvl_cre_tm_summ_cnt ----------------- */ 
+
+ update_job: d2compaus_pa_busvl_cre_tm_summ_cnt   job_type: CMD 
+ box_name: D2COMPAUS_PA_BTCH_UPLD_BUSVL
+ command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_postgresql_master.ksh PALIGN DEV FUNCTION "pfzalgn_ctrl.pa_sp_load_busvl_tm_summ('TEAM_BUSVL')"
+ machine: amrvopsfa000001
+ owner: SRVAMR-PALIGN
+ permission: me,mx,ge,gx
+ date_conditions: 0
+ condition: s(d2compaus_pa_busvl_ins_algn_jb_ctrl_tm)
+ description: "Batch Upload business validations for team"
+ std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+ std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+ alarm_if_fail: 0
+ alarm_if_terminated: 0
+ send_notification: F
+ notification_template: "ALARM_TEMPLATE"
+ notification_emailaddress: anand.kumar@pfizer.com
+ notification_emailaddress: madhushree.m@pfizer.com
+ notification_emailaddress: sachinthadakmanlu.sathyanarayana@pfizer.com
+ notification_emailaddress: devesh.tikyani@pfizer.com
+ notification_emailaddress: pradumna.tamkute@pfizer.com
+ notification_emailaddress: prateek.arora@pfizer.com
+ notification_emailaddress: ameer.nowsathbabu@pfizer.com
+
+
+ /* ----------------- d2compaus_pa_busvl_cre_postn_summ_cnt ----------------- */ 
+
+ update_job: d2compaus_pa_busvl_cre_postn_summ_cnt   job_type: CMD 
+ box_name: D2COMPAUS_PA_BTCH_UPLD_BUSVL
+ command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_postgresql_master.ksh PALIGN DEV FUNCTION "pfzalgn_ctrl.pa_sp_load_busvl_postn_summ('POSTN_BUSVL')"
+ machine: amrvopsfa000001
+ owner: SRVAMR-PALIGN
+ permission: me,mx,ge,gx
+ date_conditions: 0
+ condition: s(d2compaus_pa_busvl_cre_tm_summ_cnt)
+ description: "Batch Upload business validations for position"
+ std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+ std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+ alarm_if_fail: 0
+ alarm_if_terminated: 0
+ send_notification: F
+ notification_template: "ALARM_TEMPLATE"
+ notification_emailaddress: anand.kumar@pfizer.com
+ notification_emailaddress: madhushree.m@pfizer.com
+ notification_emailaddress: sachinthadakmanlu.sathyanarayana@pfizer.com
+ notification_emailaddress: devesh.tikyani@pfizer.com
+ notification_emailaddress: pradumna.tamkute@pfizer.com
+ notification_emailaddress: prateek.arora@pfizer.com
+ notification_emailaddress: ameer.nowsathbabu@pfizer.com
+
+
+ /* ----------------- d2compaus_pa_busvl_cre_tpl_tm_summ_cnt ----------------- */ 
+
+ update_job: d2compaus_pa_busvl_cre_tpl_tm_summ_cnt   job_type: CMD 
+ box_name: D2COMPAUS_PA_BTCH_UPLD_BUSVL
+ command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_postgresql_master.ksh PALIGN DEV FUNCTION "pfzalgn_ctrl.pa_sp_load_busvl_tmplt_tm_summ('TMPLT_TEAM_SUMMARY')"
+ machine: amrvopsfa000001
+ owner: SRVAMR-PALIGN
+ permission: me,mx,ge,gx
+ date_conditions: 0
+ condition: s(d2compaus_pa_busvl_cre_postn_summ_cnt)
+ description: "Batch Upload business validations for team template"
+ std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+ std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+ alarm_if_fail: 0
+ alarm_if_terminated: 0
+ send_notification: F
+ notification_template: "ALARM_TEMPLATE"
+ notification_emailaddress: anand.kumar@pfizer.com
+ notification_emailaddress: madhushree.m@pfizer.com
+ notification_emailaddress: sachinthadakmanlu.sathyanarayana@pfizer.com
+ notification_emailaddress: devesh.tikyani@pfizer.com
+ notification_emailaddress: pradumna.tamkute@pfizer.com
+ notification_emailaddress: prateek.arora@pfizer.com
+ notification_emailaddress: ameer.nowsathbabu@pfizer.com
+
+
+ /* ----------------- d2compaus_pa_busvl_cre_tpl_pos_summ_cnt ----------------- */ 
+
+ update_job: d2compaus_pa_busvl_cre_tpl_pos_summ_cnt   job_type: CMD 
+ box_name: D2COMPAUS_PA_BTCH_UPLD_BUSVL
+ command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_postgresql_master.ksh PALIGN DEV FUNCTION "pfzalgn_ctrl.pa_sp_load_busvl_tmplt_postn_summ('TMPLT_POSTN_SUMMARY')"
+ machine: amrvopsfa000001
+ owner: SRVAMR-PALIGN
+ permission: me,mx,ge,gx
+ date_conditions: 0
+ condition: s(d2compaus_pa_busvl_cre_tpl_tm_summ_cnt)
+ description: "Batch Upload business validations for position template"
+ std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+ std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+ alarm_if_fail: 0
+ alarm_if_terminated: 0
+ send_notification: F
+ notification_template: "ALARM_TEMPLATE"
+ notification_emailaddress: anand.kumar@pfizer.com
+ notification_emailaddress: madhushree.m@pfizer.com
+ notification_emailaddress: sachinthadakmanlu.sathyanarayana@pfizer.com
+ notification_emailaddress: devesh.tikyani@pfizer.com
+ notification_emailaddress: pradumna.tamkute@pfizer.com
+ notification_emailaddress: prateek.arora@pfizer.com
+ notification_emailaddress: ameer.nowsathbabu@pfizer.com
+
+
+ /* ----------------- d2compaus_pa_busvl_upd_pkg_busvl_ready ----------------- */ 
+
+ update_job: d2compaus_pa_busvl_upd_pkg_busvl_ready   job_type: CMD 
+ box_name: D2COMPAUS_PA_BTCH_UPLD_BUSVL
+ command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_postgresql_master.ksh PALIGN DEV FUNCTION "pfzalgn_ctrl.pa_sp_upd_loadset_pkg('BUSVL','READY')"
+ machine: amrvopsfa000001
+ owner: SRVAMR-PALIGN
+ permission: me,mx,ge,gx
+ date_conditions: 0
+ condition: s(d2compaus_pa_busvl_cre_mrg_tbl_vw) & s(d2compaus_pa_busvl_cre_tpl_pos_summ_cnt)
+ description: "Batch Upload update loadset package table with BUSVL and READY"
+ std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+ std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+ alarm_if_fail: 0
+ alarm_if_terminated: 0
+ send_notification: F
+ notification_template: "ALARM_TEMPLATE"
+ notification_emailaddress: anand.kumar@pfizer.com
+ notification_emailaddress: madhushree.m@pfizer.com
+ notification_emailaddress: sachinthadakmanlu.sathyanarayana@pfizer.com
+ notification_emailaddress: devesh.tikyani@pfizer.com
+ notification_emailaddress: pradumna.tamkute@pfizer.com
+ notification_emailaddress: prateek.arora@pfizer.com
+ notification_emailaddress: ameer.nowsathbabu@pfizer.com
+
+
+ /* ----------------- d2compaus_pa_busvl_cls_btch ----------------- */ 
+
+ update_job: d2compaus_pa_busvl_cls_btch   job_type: CMD 
+ box_name: D2COMPAUS_PA_BTCH_UPLD_BUSVL
+ command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_postgresql_master.ksh PALIGN DEV FUNCTION "pfzalgn_ctrl.pa_sp_algn_loadset_scn_batch('BATCH_CLS')"
+ machine: amrvopsfa000001
+ owner: SRVAMR-PALIGN
+ permission: me,mx,ge,gx
+ date_conditions: 0
+ condition: s(d2compaus_pa_busvl_upd_pkg_busvl_ready)
+ description: "Business Validation close batch"
+ std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+ std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+ alarm_if_fail: 0
+ alarm_if_terminated: 0
+ send_notification: F
+ notification_template: "ALARM_TEMPLATE"
+ notification_emailaddress: anand.kumar@pfizer.com
+ notification_emailaddress: madhushree.m@pfizer.com
+ notification_emailaddress: sachinthadakmanlu.sathyanarayana@pfizer.com
+ notification_emailaddress: devesh.tikyani@pfizer.com
+ notification_emailaddress: pradumna.tamkute@pfizer.com
+ notification_emailaddress: prateek.arora@pfizer.com
+ notification_emailaddress: ameer.nowsathbabu@pfizer.com
+
+
+ /* ----------------- d2compaus_pa_btch_upld_busvl_box_cls ----------------- */ 
+
+ update_job: d2compaus_pa_btch_upld_busvl_box_cls   job_type: CMD 
+ box_name: D2COMPAUS_PA_BTCH_UPLD_BUSVL
+ command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_postgresql_master.ksh PALIGN DEV FUNCTION "'BUSVL_FLOW_COMPLETED'"
+ machine: amrvopsfa000001
+ owner: SRVAMR-PALIGN
+ permission: me,mx,ge,gx
+ date_conditions: 0
+ condition: (s(d2compaus_pa_busvl_cls_btch) | e(d2compaus_pa_busvl_ck_mul_ent_ldst_pkg) = 14)
+ description: "Busvl flow completed"
+ std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+ std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+ alarm_if_fail: 0
+ alarm_if_terminated: 0
+ send_notification: F
+ notification_template: "ALARM_TEMPLATE"
+ notification_emailaddress: anand.kumar@pfizer.com
+ notification_emailaddress: madhushree.m@pfizer.com
+ notification_emailaddress: sachinthadakmanlu.sathyanarayana@pfizer.com
+ notification_emailaddress: devesh.tikyani@pfizer.com
+ notification_emailaddress: pradumna.tamkute@pfizer.com
+ notification_emailaddress: prateek.arora@pfizer.com
+ notification_emailaddress: ameer.nowsathbabu@pfizer.com
+
+
+ /* ----------------- d2compaus_pa_btch_upld_busvl_sleep ----------------- */ 
+
+ update_job: d2compaus_pa_btch_upld_busvl_sleep   job_type: CMD 
+ box_name: D2COMPAUS_PA_BTCH_UPLD_BUSVL
+ command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_postgresql_master.ksh PALIGN DEV FUNCTION "CONCAT((pg_sleep(300)::varchar),'FAILURE')"
+ machine: amrvopsfa000001
+ owner: SRVAMR-PALIGN
+ permission: me,mx,ge,gx
+ date_conditions: 0
+ condition: (f(d2compaus_pa_btch_upld_busvl_box_opn) | f(d2compaus_pa_busvl_ck_mul_ent_ldst_pkg) | f(d2compaus_pa_busvl_upd_pkg_busvl_proc) | f(d2compaus_pa_busvl_cre_scn_tbl) | f(d2compaus_pa_busvl_opn_btch) | f(d2compaus_pa_busvl_ins_algn_jb_ctrl_tm) | f(d2compaus_pa_busvl_cre_mrg_tbl_vw) | f(d2compaus_pa_busvl_cre_tm_summ_cnt) | f(d2compaus_pa_busvl_cre_postn_summ_cnt) | f(d2compaus_pa_busvl_cre_tpl_tm_summ_cnt) | f(d2compaus_pa_busvl_cre_tpl_pos_summ_cnt) | f(d2compaus_pa_busvl_upd_pkg_busvl_ready) | f(d2compaus_pa_busvl_cls_btch) | f(d2compaus_pa_btch_upld_busvl_box_cls))
+ description: "batch upload sleep 5 mins before failing a box on job failure"
+ std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+ std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+ alarm_if_fail: 0
+ alarm_if_terminated: 0
+
+
