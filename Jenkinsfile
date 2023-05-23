@@ -2,6 +2,10 @@
 
 pipeline {
     agent any
+    environment{
+	jilDirectory='Autosys'
+	apiEndpoint='https://amraelp00011055.pfizer.com:9443/AEWS/jil'
+    }
     parameters {
         choice choices: ['No', 'Yes'], description: 'Mention if You want to Deploy into Autosys Environment', name: 'Deploy_to_Autosys'     
     }
