@@ -15,10 +15,10 @@ jilFiles=$(find ${jilDirectory} -name '*.jil')
 # Iterate over the JIL files and make POST requests
 for jilFile in ${jilFiles}; do
     echo "Processing file: ${jilFile}"
-    if [ "${target_branch}" = "dev" ]; then
+    #if [ "${target_branch}" = "dev" ]; then
         # Replace string in the JIL file for the "test" branch
-        sed -i 's/insert/update/' "${jilFile}"
-    fi
+        #sed -i 's/insert/update/' "${jilFile}"
+    #fi
     # Perform the curl command
     response=$(curl -X POST -H 'Content-Type: text/plain' --upload-file "${jilFile}" ${apiEndpoint} -k --user "${USERNAME}:${PASSWORD}" -i)
     
