@@ -22,7 +22,7 @@ pipeline {
             			env.PASSWORD = sh(script: "echo \$PASSWORD", returnStdout: true).trim()
             			env.USERNAME = sh(script: "echo \$USERNAME", returnStdout: true).trim()
         		} 	
-			sh 'script/deploy.sh'			
+			sh 'DevOps_Scripts/deploy.sh'			
 		}
             }
 				
