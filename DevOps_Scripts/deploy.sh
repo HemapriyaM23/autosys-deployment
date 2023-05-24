@@ -6,6 +6,9 @@ successfulFiles=() # Array to store successful JIL files
 USERNAME="${USERNAME}"
 PASSWORD="${PASSWORD}"
 
+target_branch=${GIT_BRANCH}
+echo "target branch is : ${target_branch}"
+
 # Get a list of JIL files in the directory
 jilFiles=$(find ${jilDirectory} -name '*.jil')
 
