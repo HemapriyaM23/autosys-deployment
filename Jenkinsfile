@@ -16,7 +16,7 @@ pipeline {
                  expression { params.Deploy_to_Autosys == "Yes" }
             }
             steps{		
-		sh 'chmod +x script/deploy.sh' 
+		sh 'chmod +x DevOps_Scripts/deploy.sh' 
 		withCredentials([usernamePassword(credentialsId: 'sfaops', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
         		script {
             			env.PASSWORD = sh(script: "echo \$PASSWORD", returnStdout: true).trim()
