@@ -1,7 +1,7 @@
 
 /* ----------------- D2COMPAUS_PA_BTCH_UPLD_BUSVL ----------------- */ 
 
-update_job: D2COMPAUS_PA_BTCH_UPLD_BUSVL   job_type: BOX 
+insert_job: D2COMPAUS_PA_BTCH_UPLD_BUSVL   job_type: BOX 
 owner: SRVAMR-PALIGN
 permission: me,mx,gx,wx
 date_conditions: 0
