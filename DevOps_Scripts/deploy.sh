@@ -23,6 +23,9 @@ for jilFile in ${jilFiles}; do
         sed -i 's/pa_matillion_master.ksh PALIGN DEV PFZALGN_DEV PFZALGN_DEV/pa_matillion_master.ksh PALIGN TEST PFZALGN_TEST PFZALGN_TEST/g' "${jilFile}"
         sed -i 's/pa_postgresql_master.ksh PFZALGN DEV/pa_postgresql_master.ksh PFZALGN TEST/g' "${jilFile}"
         sed -i 's/pa_snowflake_master.ksh cometl_pa_ods_dev/pa_snowflake_master.ksh cometl_pa_ods_test/g' "${jilFile}"
+        sed -i 's/master_batch_upload_dev.ksh/master_batch_upload.ksh/g' "${jilFile}"
+        sed -i 's/master_cascade_notification.ksh DEV/master_cascade_notification.ksh TEST/g' "${jilFile}"
+        sed -i 's/master_dataloader.ksh ORACLE PROD DEV/master_dataloader.ksh ORACLE PROD TEST/g' "${jilFile}"
     fi
     if [ "${target_branch}" = "sit" ]; then
         # Replace string in the JIL file for the "test" branch
@@ -32,6 +35,9 @@ for jilFile in ${jilFiles}; do
         sed -i 's/pa_matillion_master.ksh PALIGN DEV PFZALGN_DEV PFZALGN_DEV/pa_matillion_master.ksh PALIGN SIT PFZALGN PFZALGN/g' "${jilFile}"
         sed -i 's/pa_postgresql_master.ksh PFZALGN DEV/pa_postgresql_master.ksh PFZALGN SIT/g' "${jilFile}"
         sed -i 's/pa_snowflake_master.ksh cometl_pa_ods_dev/pa_snowflake_master.ksh cometl_pa_ods/g' "${jilFile}"
+        sed -i 's/master_batch_upload_dev.ksh/master_batch_upload_sit.ksh/g' "${jilFile}"
+        sed -i 's/master_cascade_notification.ksh DEV/master_cascade_notification.ksh SIT/g' "${jilFile}"
+        sed -i 's/master_dataloader.ksh ORACLE PROD DEV/master_dataloader.ksh ORACLE PROD SIT/g' "${jilFile}"
     fi
     if [ "${target_branch}" = "uat" ]; then
         # Replace string in the JIL file for the "test" branch
@@ -41,6 +47,9 @@ for jilFile in ${jilFiles}; do
         sed -i 's/pa_matillion_master.ksh PALIGN DEV PFZALGN_DEV PFZALGN_DEV/pa_matillion_master.ksh PALIGN UAT PFZALGN_STG PFZALGN_STG/g' "${jilFile}"
         sed -i 's/pa_postgresql_master.ksh PFZALGN DEV/pa_postgresql_master.ksh PFZALGN UAT/g' "${jilFile}"
         sed -i 's/pa_snowflake_master.ksh cometl_pa_ods_dev/pa_snowflake_master.ksh cometl_pa_stg/g' "${jilFile}"
+        sed -i 's/master_batch_upload_dev.ksh/master_batch_upload_uat.ksh/g' "${jilFile}"
+        sed -i 's/master_cascade_notification.ksh DEV/master_cascade_notification.ksh UAT/g' "${jilFile}"
+        sed -i 's/master_dataloader.ksh ORACLE PROD DEV/master_dataloader.ksh ORACLE PROD UAT/g' "${jilFile}"
     fi
     if [ "${target_branch}" = "main" ]; then
         # Replace string in the JIL file for the "test" branch
@@ -50,6 +59,9 @@ for jilFile in ${jilFiles}; do
         sed -i 's/pa_matillion_master.ksh PALIGN DEV PFZALGN_DEV PFZALGN_DEV/pa_matillion_master.ksh PALIGN PROD PFZALGN PFZALGN/g' "${jilFile}"
         sed -i 's/pa_postgresql_master.ksh PFZALGN DEV/pa_postgresql_master.ksh PFZALGN PROD/g' "${jilFile}"
         sed -i 's/pa_snowflake_master.ksh cometl_pa_ods_dev/pa_snowflake_master.ksh cometl_pa_prod/g' "${jilFile}"
+        sed -i 's/master_batch_upload_dev.ksh/master_batch_upload_prod.ksh/g' "${jilFile}"
+        sed -i 's/master_cascade_notification.ksh DEV/master_cascade_notification.ksh PROD/g' "${jilFile}"
+        sed -i 's/master_dataloader.ksh ORACLE PROD DEV/master_dataloader.ksh ORACLE PROD PROD/g' "${jilFile}"
     fi
     # Perform the curl command
     response=$(curl -X POST -H 'Content-Type: text/plain' --upload-file "${jilFile}" ${apiEndpoint} -k --user "${USERNAME}:${PASSWORD}" -i)
