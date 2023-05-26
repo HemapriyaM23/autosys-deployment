@@ -1,0 +1,184 @@
+insert_job: D2COMPAUS_PA_SAMPLE_PARENT_BOX   job_type: BOX 
+owner: SRVAMR-PALIGN
+permission: me,mx,gx,wx
+date_conditions: 0
+condition: v(D2EPSWLA_GV_MASTER_MAINT_WINDOW) = "RAMPUP"
+description: "THis job"
+alarm_if_fail: 0
+alarm_if_terminated: 0
+
+
+insert_job: d2compaus_pa_sample_par_box_opn   job_type: CMD 
+box_name: D2COMPAUS_PA_SAMPLE_PARENT_BOX
+command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_matillion_master.ksh PALIGN DEV FUNCTION "'SAMPLE_PAR_BOX_OPN'"
+machine: amrvopsfa000001
+owner: SRVAMR-PALIGN
+permission: me,mx,ge,gx
+date_conditions: 0
+description: "Postgres sample job"
+std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+alarm_if_fail: 0
+alarm_if_terminated: 0
+send_notification: F
+notification_template: "ALARM_TEMPLATE"
+notification_emailaddress: Hemapriya.M@pfizer.com
+
+
+
+
+insert_job: d2compaus_pa_sample_par_box_cls   job_type: CMD 
+box_name: D2COMPAUS_PA_SAMPLE_PARENT_BOX
+command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_matillion_master.ksh PALIGN DEV FUNCTION "'SAMPLE_PAR_BOX_CLS'"
+machine: amrvopsfa000001
+owner: SRVAMR-PALIGN
+permission: me,mx,ge,gx
+date_conditions: 0
+condition: s(D2COMPAUS_PA_SAMPLE_BOX)
+description: "Postgres sample job"
+std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+alarm_if_fail: 0
+alarm_if_terminated: 0
+send_notification: F
+notification_template: "ALARM_TEMPLATE"
+notification_emailaddress: Hemapriya.M@pfizer.com
+
+
+
+
+insert_job: D2COMPAUS_PA_SAMPLE_BOX   job_type: BOX 
+box_name: D2COMPAUS_PA_SAMPLE_PARENT_BOX
+owner: SRVAMR-PALIGN
+permission: me,mx,gx,wx
+date_conditions: 0
+condition: s(d2compaus_pa_sample_par_box_opn)
+box_success: s(d2compaus_pa_sample_box_cls)
+box_failure: f(d2compaus_pa_sample_box_cls)
+description: "This job action affects denorm tables and switch"
+alarm_if_fail: 0
+alarm_if_terminated: 0
+
+
+insert_job: d2compaus_pa_sample_box_opn   job_type: CMD 
+box_name: D2COMPAUS_PA_SAMPLE_BOX
+command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_matillion_master.ksh PALIGN DEV FUNCTION "'SAMPLE_BOX_OPN'"
+machine: amrvopsfa000001
+owner: SRVAMR-PALIGN
+permission: me,mx,ge,gx
+date_conditions: 0
+description: "Postgres sample job"
+std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+alarm_if_fail: 0
+alarm_if_terminated: 0
+send_notification: F
+notification_template: "ALARM_TEMPLATE"
+notification_emailaddress: Hemapriya.M@pfizer.com
+
+
+insert_job: d2compaus_pa_sample_box_cls   job_type: CMD 
+box_name: D2COMPAUS_PA_SAMPLE_BOX
+command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_matillion_master.ksh PALIGN DEV FUNCTION "'SAMPLE_BOX_CLS'"
+machine: amrvopsfa000001
+owner: SRVAMR-PALIGN
+permission: me,mx,ge,gx
+date_conditions: 0
+condition: s(d2compaus_pa_sample_snowflake_master)
+description: "Postgres sample job"
+std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+alarm_if_fail: 0
+alarm_if_terminated: 0
+send_notification: F
+notification_template: "ALARM_TEMPLATE"
+notification_emailaddress: Hemapriya.M@pfizer.com
+
+
+insert_job: d2compaus_pa_sample_variable_test   job_type: CMD 
+box_name: D2COMPAUS_PA_SAMPLE_BOX
+command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_matillion_master.ksh PALIGN DEV PFZALGN_DEV PFZALGN_DEV variable_test
+machine: amrvopsfa000001
+owner: SRVAMR-PALIGN
+permission: me,mx,ge,gx
+date_conditions: 0
+condition: s(d2compaus_pa_sample_box_opn)
+description: "This job triggers matillion job variable_test"
+std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+alarm_if_fail: 0
+alarm_if_terminated: 0
+send_notification: F
+notification_template: "ALARM_TEMPLATE"
+notification_emailaddress: Hemapriya.M@pfizer.com
+
+insert_job: d2compaus_pa_sample_btch_upld   job_type: CMD 
+box_name: D2COMPAUS_PA_SAMPLE_BOX
+command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/master_batch_upload_dev.ksh par1
+machine: amrvopsfa000001
+owner: SRVAMR-PALIGN
+permission: me,mx,ge,gx
+date_conditions: 0
+condition: s(d2compaus_pa_sample_variable_test)
+description: "batch_uplad sample job"
+std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+alarm_if_fail: 0
+alarm_if_terminated: 0
+send_notification: F
+notification_template: "ALARM_TEMPLATE"
+notification_emailaddress: Hemapriya.M@pfizer.com
+
+
+insert_job: d2compaus_pa_sample_data_cascade   job_type: CMD 
+box_name: D2COMPAUS_PA_SAMPLE_BOX
+command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/master_cascade_notification.ksh DEV par2
+machine: amrvopsfa000001
+owner: SRVAMR-PALIGN
+permission: me,mx,ge,gx
+date_conditions: 0
+condition: s(d2compaus_pa_sample_btch_upld)
+description: "cascade sample job"
+std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+alarm_if_fail: 0
+alarm_if_terminated: 0
+send_notification: F
+notification_template: "ALARM_TEMPLATE"
+notification_emailaddress: Hemapriya.M@pfizer.com
+
+
+insert_job: d2compaus_pa_sample_master_dataloader   job_type: CMD 
+box_name: D2COMPAUS_PA_SAMPLE_BOX
+command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/master_dataloader.ksh ORACLE PROD DEV par3
+machine: amrvopsfa000001
+owner: SRVAMR-PALIGN
+permission: me,mx,ge,gx
+date_conditions: 0
+condition: s(d2compaus_pa_sample_data_cascade)
+description: "Postgres sample job"
+std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+alarm_if_fail: 0
+alarm_if_terminated: 0
+send_notification: F
+notification_template: "ALARM_TEMPLATE"
+notification_emailaddress: Hemapriya.M@pfizer.com
+
+
+insert_job: d2compaus_pa_sample_snowflake_master   job_type: CMD 
+box_name: D2COMPAUS_PA_SAMPLE_BOX
+command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_snowflake_master.ksh cometl_pa_ods_dev par4
+machine: amrvopsfa000001
+owner: SRVAMR-PALIGN
+permission: me,mx,ge,gx
+date_conditions: 0
+condition: s(d2compaus_pa_sample_master_dataloader)
+description: "Postgres sample job"
+std_out_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.out"
+std_err_file: "$$(D2COMPAUS_GV_PA_LOG_PATH)/$AUTO_JOB_NAME.err"
+alarm_if_fail: 0
+alarm_if_terminated: 0
+send_notification: F
+notification_template: "ALARM_TEMPLATE"
+notification_emailaddress: Hemapriya.M@pfizer.com
