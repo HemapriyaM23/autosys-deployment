@@ -1,4 +1,4 @@
-insert_job: D2COMPAUS_PA_SAMPLE_PARENT_BOX   job_type: BOX 
+update_job: D2COMPAUS_PA_SAMPLE_PARENT_BOX   job_type: BOX 
 owner: SRVAMR-PALIGN
 permission: me,mx,gx,wx
 date_conditions: 0
@@ -8,7 +8,7 @@ alarm_if_fail: 0
 alarm_if_terminated: 0
 
 
-insert_job: d2compaus_pa_sample_par_box_opn   job_type: CMD 
+update_job: d2compaus_pa_sample_par_box_opn   job_type: CMD 
 box_name: D2COMPAUS_PA_SAMPLE_PARENT_BOX
 command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_matillion_master.ksh PALIGN DEV FUNCTION "'SAMPLE_PAR_BOX_OPN'"
 machine: amrvopsfa000001
@@ -27,7 +27,7 @@ notification_emailaddress: Hemapriya.M@pfizer.com
 
 
 
-insert_job: d2compaus_pa_sample_par_box_cls   job_type: CMD 
+update_job: d2compaus_pa_sample_par_box_cls   job_type: CMD 
 box_name: D2COMPAUS_PA_SAMPLE_PARENT_BOX
 command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_matillion_master.ksh PALIGN DEV FUNCTION "'SAMPLE_PAR_BOX_CLS'"
 machine: amrvopsfa000001
@@ -47,7 +47,7 @@ notification_emailaddress: Hemapriya.M@pfizer.com
 
 
 
-insert_job: D2COMPAUS_PA_SAMPLE_BOX   job_type: BOX 
+update_job: D2COMPAUS_PA_SAMPLE_BOX   job_type: BOX 
 box_name: D2COMPAUS_PA_SAMPLE_PARENT_BOX
 owner: SRVAMR-PALIGN
 permission: me,mx,gx,wx
@@ -60,7 +60,7 @@ alarm_if_fail: 0
 alarm_if_terminated: 0
 
 
-insert_job: d2compaus_pa_sample_box_opn   job_type: CMD 
+update_job: d2compaus_pa_sample_box_opn   job_type: CMD 
 box_name: D2COMPAUS_PA_SAMPLE_BOX
 command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_matillion_master.ksh PALIGN DEV FUNCTION "'SAMPLE_BOX_OPN'"
 machine: amrvopsfa000001
@@ -77,7 +77,7 @@ notification_template: "ALARM_TEMPLATE"
 notification_emailaddress: Hemapriya.M@pfizer.com
 
 
-insert_job: d2compaus_pa_sample_box_cls   job_type: CMD 
+update_job: d2compaus_pa_sample_box_cls   job_type: CMD 
 box_name: D2COMPAUS_PA_SAMPLE_BOX
 command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_matillion_master.ksh PALIGN DEV FUNCTION "'SAMPLE_BOX_CLS'"
 machine: amrvopsfa000001
@@ -95,7 +95,7 @@ notification_template: "ALARM_TEMPLATE"
 notification_emailaddress: Hemapriya.M@pfizer.com
 
 
-insert_job: d2compaus_pa_sample_variable_test   job_type: CMD 
+update_job: d2compaus_pa_sample_variable_test   job_type: CMD 
 box_name: D2COMPAUS_PA_SAMPLE_BOX
 command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_matillion_master.ksh PALIGN DEV PFZALGN_DEV PFZALGN_DEV variable_test
 machine: amrvopsfa000001
@@ -112,7 +112,7 @@ send_notification: F
 notification_template: "ALARM_TEMPLATE"
 notification_emailaddress: Hemapriya.M@pfizer.com
 
-insert_job: d2compaus_pa_sample_btch_upld   job_type: CMD 
+update_job: d2compaus_pa_sample_btch_upld   job_type: CMD 
 box_name: D2COMPAUS_PA_SAMPLE_BOX
 command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/master_batch_upload_dev.ksh par1
 machine: amrvopsfa000001
@@ -130,7 +130,7 @@ notification_template: "ALARM_TEMPLATE"
 notification_emailaddress: Hemapriya.M@pfizer.com
 
 
-insert_job: d2compaus_pa_sample_data_cascade   job_type: CMD 
+update_job: d2compaus_pa_sample_data_cascade   job_type: CMD 
 box_name: D2COMPAUS_PA_SAMPLE_BOX
 command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/master_cascade_notification.ksh DEV par2
 machine: amrvopsfa000001
@@ -148,7 +148,7 @@ notification_template: "ALARM_TEMPLATE"
 notification_emailaddress: Hemapriya.M@pfizer.com
 
 
-insert_job: d2compaus_pa_sample_master_dataloader   job_type: CMD 
+update_job: d2compaus_pa_sample_master_dataloader   job_type: CMD 
 box_name: D2COMPAUS_PA_SAMPLE_BOX
 command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/master_dataloader.ksh ORACLE PROD DEV par3
 machine: amrvopsfa000001
@@ -166,7 +166,7 @@ notification_template: "ALARM_TEMPLATE"
 notification_emailaddress: Hemapriya.M@pfizer.com
 
 
-insert_job: d2compaus_pa_sample_snowflake_master   job_type: CMD 
+update_job: d2compaus_pa_sample_snowflake_master   job_type: CMD 
 box_name: D2COMPAUS_PA_SAMPLE_BOX
 command: $$(D2COMPAUS_GV_PA_SCRIPT_PATH)/pa_snowflake_master.ksh cometl_pa_ods_dev par4
 machine: amrvopsfa000001
