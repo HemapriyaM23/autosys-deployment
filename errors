@@ -7,7 +7,8 @@
  Main PID: 1027145 (code=exited, status=0/SUCCESS)
 
 May 31 07:02:01 ip-10-90-82-65.eu-west-1.compute.internal systemd[1]: Starting The nginx HTTP and reverse proxy server...
-May 31 07:02:01 ip-10-90-82-65.eu-west-1.compute.internal nginx[2060987]: nginx: [emerg] SSL_CTX_use_PrivateKey_file("/etc/nginx/ssl/newkey/private.key") fa>
+May 31 07:02:01 ip-10-90-82-65.eu-west-1.compute.internal nginx[2060987]: nginx: [emerg] SSL_CTX_use_PrivateKey_file("/etc/nginx/ssl/newkey/private.key") failed (SSL: error:0B080074:x509 certificate routines:X509_check_private_key:key values mismatch)
+
 May 31 07:02:01 ip-10-90-82-65.eu-west-1.compute.internal nginx[2060987]: nginx: configuration file /etc/nginx/nginx.conf test failed
 May 31 07:02:01 ip-10-90-82-65.eu-west-1.compute.internal systemd[1]: nginx.service: Control process exited, code=exited status=1
 May 31 07:02:01 ip-10-90-82-65.eu-west-1.compute.internal systemd[1]: nginx.service: Failed with result 'exit-code'.
