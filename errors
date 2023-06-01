@@ -1,2 +1,1 @@
-
-SSL_CTX_use_PrivateKey_file("/etc/nginx/ssl/newkey/private.key") failed (SSL: error:0200100D:system library:fopen:Permission denied:fopen('/etc/nginx/ssl/newkey/private.key','r') error:20074002:BIO routines:file_ctrl:system lib error:140B0002:SSL routines:SSL_CTX_use_PrivateKey_file:system lib)
+${#array[@]} is used to get the length of an array.
