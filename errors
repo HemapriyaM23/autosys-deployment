@@ -1,34 +1,39 @@
-To upgrade Jenkins on Linux, you can follow these steps:
+To upgrade Liquibase installed on a Linux server, you can follow these steps:
 
-Stop Jenkins: Open a terminal or SSH into your Linux machine and stop the Jenkins service. Depending on your distribution and setup, you can use one of the following commands:
-
-Ubuntu/Debian: sudo systemctl stop jenkins
-CentOS/RHEL: sudo service jenkins stop
-Backup Jenkins: It's crucial to create a backup of your Jenkins installation before proceeding with the upgrade. This includes configuration files, plugins, and any other important data. You can use the following command to create a backup:
+Check Current Version: Determine the current version of Liquibase installed on your server. You can do this by running the following command:
 
 bash
 Copy code
-sudo cp -r /var/lib/jenkins /var/lib/jenkins_backup
-This command will create a backup of the Jenkins home directory at /var/lib/jenkins_backup.
+liquibase --version
+This command will display the current version of Liquibase installed.
 
-Download New Version: Visit the Jenkins website and find the latest stable version of Jenkins. Use the wget command to download the Jenkins WAR file:
+Download New Version: Visit the Liquibase website (https://www.liquibase.org/) and download the latest stable version of Liquibase. You can download the binary distribution (ZIP or TAR) that corresponds to your operating system.
+wget -O liquibase.zip https://github.com/liquibase/liquibase/releases/latest/download/liquibase-linux.zip
 
-bash
-Copy code
-wget http://updates.jenkins-ci.org/download/war/<version>/jenkins.war
-Replace <version> with the specific version number you want to upgrade to.
-
-Replace Jenkins WAR File: Move the downloaded Jenkins WAR file to the Jenkins installation directory, typically located at /usr/share/jenkins:
+Extract the Archive: Extract the downloaded Liquibase archive to a directory of your choice. You can use the following command to extract a ZIP archive:
 
 bash
 Copy code
-sudo mv jenkins.war /usr/share/jenkins/
-Start Jenkins: Start the Jenkins service again using the appropriate command:
+unzip liquibase-x.x.x.zip
+Replace "liquibase-x.x.x.zip" with the name of the downloaded archive.
 
-Ubuntu/Debian: sudo systemctl start jenkins
-CentOS/RHEL: sudo service jenkins start
-Verify Upgrade: Access the Jenkins web interface using a web browser and verify that the new version is running. Ensure that your previous configurations and data are intact.
+Move Liquibase: Move the extracted Liquibase directory to a location where you want to store it on your server. For example, you can move it to /opt/liquibase:
 
-Plugin Updates: After upgrading Jenkins, it's recommended to check for updates to your installed plugins. You can do this through the Jenkins web interface by navigating to "Manage Jenkins" -> "Manage Plugins." Look for available updates and install them to ensure compatibility with the new Jenkins version.
+bash
+Copy code
+sudo mv liquibase-x.x.x /opt/liquibase
+Update Environment Variables: Update the system's environment variables to include the Liquibase binary in the PATH variable. Open the file /etc/environment in a text editor and add the following line at the end:
 
-Remember, these steps are generic and may vary depending on your Linux distribution and Jenkins setup. Always refer to the official Jenkins documentation for detailed instructions specific to your environment.
+bash
+Copy code
+PATH="/opt/liquibase:$PATH"
+Save the file and exit the text editor.
+
+Verify Upgrade: Open a new terminal or run source /etc/environment in the existing terminal to reload the environment variables. Then, run the following command to check if the new version of Liquibase is recognized:
+
+bash
+Copy code
+liquibase --version
+The output should display the new version of Liquibase that you installed.
+
+That's it! You have successfully upgraded Liquibase on your Linux server. You can now use the new version of Liquibase for your database change management tasks. Remember to update any relevant scripts or automation that reference the Liquibase installation path.
