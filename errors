@@ -8,7 +8,7 @@ liquibase --version
 This command will display the current version of Liquibase installed.
 
 Download New Version: Visit the Liquibase website (https://www.liquibase.org/) and download the latest stable version of Liquibase. You can download the binary distribution (ZIP or TAR) that corresponds to your operating system.
-wget -O liquibase.zip https://github.com/liquibase/liquibase/releases/latest/download/liquibase-linux.zip
+wget -O liquibase.zip https://download.liquibase.org/download/liquibase-core-4.21.1-bin.zip
 
 Extract the Archive: Extract the downloaded Liquibase archive to a directory of your choice. You can use the following command to extract a ZIP archive:
 
