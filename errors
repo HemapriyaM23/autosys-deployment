@@ -1,39 +1,33 @@
-To upgrade Liquibase installed on a Linux server, you can follow these steps:
+To create a new Jenkins application from the latest Amazon Machine Image (AMI) without reinstalling Jenkins, you can follow these general steps:
 
-Check Current Version: Determine the current version of Liquibase installed on your server. You can do this by running the following command:
+Launch an EC2 instance using the latest Jenkins AMI:
 
-bash
-Copy code
-liquibase --version
-This command will display the current version of Liquibase installed.
+Go to the AWS Management Console and navigate to the EC2 service.
+Click on "Launch Instance" and select the appropriate AMI that has Jenkins installed.
+Choose the desired instance type, configure other settings as needed, and proceed to launch the instance.
+Connect to the EC2 instance:
 
-Download New Version: Visit the Liquibase website (https://www.liquibase.org/) and download the latest stable version of Liquibase. You can download the binary distribution (ZIP or TAR) that corresponds to your operating system.
-wget -O liquibase.zip https://download.liquibase.org/download/liquibase-core-4.21.1-bin.zip
+Once the instance is running, connect to it using SSH or other preferred methods (e.g., EC2 Instance Connect).
+Ensure you have the necessary permissions to access the instance.
+Backup existing Jenkins configuration (optional):
 
-Extract the Archive: Extract the downloaded Liquibase archive to a directory of your choice. You can use the following command to extract a ZIP archive:
+If you want to preserve the existing Jenkins configuration, you can create a backup of the current Jenkins home directory, which typically resides in /var/lib/jenkins.
+Copy the contents of the Jenkins home directory to a safe location using the cp command or any other method.
+Stop the Jenkins service:
 
-bash
-Copy code
-unzip liquibase-x.x.x.zip
-Replace "liquibase-x.x.x.zip" with the name of the downloaded archive.
+Run the appropriate command to stop the Jenkins service. For example, on Ubuntu, you can use: sudo service jenkins stop.
+Replace the Jenkins home directory:
 
-Move Liquibase: Move the extracted Liquibase directory to a location where you want to store it on your server. For example, you can move it to /opt/liquibase:
+If you created a backup in the previous step, you can now replace the Jenkins home directory with the contents from the backup.
+Copy the backed-up Jenkins home directory to the appropriate location (/var/lib/jenkins) using the cp command or any other method.
+Start the Jenkins service:
 
-bash
-Copy code
-sudo mv liquibase-x.x.x /opt/liquibase
-Update Environment Variables: Update the system's environment variables to include the Liquibase binary in the PATH variable. Open the file /etc/environment in a text editor and add the following line at the end:
+Start the Jenkins service again using the appropriate command. For example, on Ubuntu: sudo service jenkins start.
+Access Jenkins web interface:
 
-bash
-Copy code
-PATH="/opt/liquibase:$PATH"
-Save the file and exit the text editor.
+Once the service is up and running, you should be able to access the Jenkins web interface using the public IP or DNS of your EC2 instance.
+Open a web browser and navigate to http://<EC2_Instance_IP>:8080 or the appropriate port configured for Jenkins.
+Verify Jenkins configuration and plugins:
 
-Verify Upgrade: Open a new terminal or run source /etc/environment in the existing terminal to reload the environment variables. Then, run the following command to check if the new version of Liquibase is recognized:
-
-bash
-Copy code
-liquibase --version
-The output should display the new version of Liquibase that you installed.
-
-That's it! You have successfully upgraded Liquibase on your Linux server. You can now use the new version of Liquibase for your database change management tasks. Remember to update any relevant scripts or automation that reference the Liquibase installation path.
+Log in to Jenkins using the admin credentials or the appropriate user account.
+Check the Jenkins configuration and ensure that the necessary plugins are installed and functioning correctly.
