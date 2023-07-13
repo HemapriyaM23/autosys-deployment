@@ -16,15 +16,12 @@ pipeline {
                  expression { params.Deploy_to_Autosys == "Yes" }
             }
             steps{		
-		sh 'chmod +x DevOps_Scripts/deploy.sh' 
-		withCredentials([usernamePassword(credentialsId: 'sfaops', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-        		script {
-            			env.PASSWORD = sh(script: "echo \$PASSWORD", returnStdout: true).trim()
-            			env.USERNAME = sh(script: "echo \$USERNAME", returnStdout: true).trim()
-        		} 	
-			sh 'DevOps_Scripts/deploy.sh'			
+		sh "scp -r test.py srvamr-sfaops@10.191.97.113:/tmp"
+		sh "scp -r test.py srvamr-sfaops@10.191.112.123:/tmp"    
+                sh "ssh srvamr-sfaops@10.191.112.123 'chmod -R 775 /tmp/test'"
+               		
 		}
-            }
+            
 				
         }
     }
