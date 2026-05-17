@@ -1,0 +1,630 @@
+name: Replacement Strings - Reusable Workflow
+
+on:
+  workflow_call:
+    inputs:
+      source_branch:
+        description: Source branch to create replacement branch from
+        required: true
+        type: string
+      destination_branch:
+        description: Destination branch for pull request
+        required: true
+        type: string
+      mapping_input_mode:
+        description: Select mapping input mode (manual strings or GitHub variable dictionary)
+        required: true
+        default: manual
+        type: string
+      source_strings:
+        description: "Source strings (Comma separated values, mapped by position)"
+        required: false
+        type: string
+        default: ""
+      destination_strings:
+        description: "Destination strings (Comma separated values, mapped by position)"
+        required: false
+        type: string
+        default: ""
+      folder:
+        description: Folder where replacements are applied (relative to the root of the repository)
+        required: true
+        type: string
+    secrets:
+      SSH_SIGNING_KEY:
+        description: SSH private key used for signed commits
+        required: true
+    outputs:
+      pr_url:
+        description: URL of the created pull request
+        value: ${{ jobs.replacement_string.outputs.pr_url }}
+
+
+jobs:
+  guardrail:
+    runs-on: [self-hosted, bolt-ubuntu]
+    outputs:
+      resolved_source_strings: ${{ steps.guardrail_mapping_config.outputs.source_strings }}
+      resolved_destination_strings: ${{ steps.guardrail_mapping_config.outputs.destination_strings }}
+      resolved_input_mode: ${{ steps.resolve_mappings.outputs.mapping_input_mode }}
+      resolved_mapping_variable_name: ${{ steps.resolve_mappings.outputs.mapping_variable_name }}
+      resolved_mapping_dictionary_key: ${{ steps.resolve_mappings.outputs.mapping_dictionary_key }}
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout source base branch
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.source_branch }}
+
+      - name: Resolve mapping inputs (manual or GitHub variable)
+        id: resolve_mappings
+        uses: actions/github-script@v9
+        env:
+          INPUT_MODE: ${{ inputs.mapping_input_mode }}
+          SOURCE_BRANCH: ${{ inputs.source_branch }}
+          DESTINATION_BRANCH: ${{ inputs.destination_branch }}
+          MANUAL_SOURCE_STRINGS: ${{ inputs.source_strings }}
+          MANUAL_DESTINATION_STRINGS: ${{ inputs.destination_strings }}
+        with:
+          script: |
+            const mode = (process.env.INPUT_MODE || 'manual').trim();
+            const variableName = 'REPLACEMENT_STR_CONFIG';
+            const sourceBranch = (process.env.SOURCE_BRANCH || '').trim();
+            const destinationBranch = (process.env.DESTINATION_BRANCH || '').trim();
+            const manualSource = process.env.MANUAL_SOURCE_STRINGS || '';
+            const manualDestination = process.env.MANUAL_DESTINATION_STRINGS || '';
+            const mappingDictionaryKey = `${sourceBranch}_${destinationBranch}`;
+
+            if (!['manual', 'github_variable'].includes(mode)) {
+              core.setFailed(`Invalid mapping_input_mode '${mode}'. Supported values: manual, github_variable.`);
+              return;
+            }
+
+            let sourceStrings = manualSource;
+            let destinationStrings = manualDestination;
+
+            if (mode === 'github_variable') {
+              sourceStrings = '';
+              destinationStrings = '';
+            }
+
+            core.info(`Resolved mappings using mode: ${mode}`);
+            if (mode === 'github_variable') {
+              core.info(`Resolved mappings from GitHub variable: ${variableName}`);
+              core.info(`Resolved mapping key from branches: ${mappingDictionaryKey}`);
+            }
+
+            core.setOutput('source_strings', sourceStrings);
+            core.setOutput('destination_strings', destinationStrings);
+            core.setOutput('mapping_input_mode', mode);
+            core.setOutput('mapping_variable_name', variableName);
+            core.setOutput('mapping_dictionary_key', mappingDictionaryKey);
+
+      - name: Guard Rail 1 - Ensure GitHub mapping variable and dictionary key exist
+        id: guardrail_mapping_config
+        uses: actions/github-script@v9
+        env:
+          INPUT_MODE: ${{ steps.resolve_mappings.outputs.mapping_input_mode }}
+          MAPPING_VARIABLE_NAME: ${{ steps.resolve_mappings.outputs.mapping_variable_name }}
+          MAPPING_DICTIONARY_KEY: ${{ steps.resolve_mappings.outputs.mapping_dictionary_key }}
+          MANUAL_SOURCE_STRINGS: ${{ inputs.source_strings }}
+          MANUAL_DESTINATION_STRINGS: ${{ inputs.destination_strings }}
+          VARIABLE_MAPPINGS_JSON: ${{ vars.REPLACEMENT_STR_CONFIG }}
+        with:
+          script: |
+            const mode = (process.env.INPUT_MODE || 'manual').trim();
+            const variableName = (process.env.MAPPING_VARIABLE_NAME || '').trim();
+            const selectedKey = (process.env.MAPPING_DICTIONARY_KEY || '').trim();
+            const manualSource = process.env.MANUAL_SOURCE_STRINGS || '';
+            const manualDestination = process.env.MANUAL_DESTINATION_STRINGS || '';
+            const variableMappingsJson = process.env.VARIABLE_MAPPINGS_JSON || '';
+
+            let sourceStrings = manualSource;
+            let destinationStrings = manualDestination;
+
+            if (mode === 'github_variable') {
+              if (!variableMappingsJson.trim()) {
+                core.setFailed(`GitHub variable '${variableName}' is empty or not found.`);
+                return;
+              }
+
+              let parsed;
+              try {
+                parsed = JSON.parse(variableMappingsJson);
+              } catch (error) {
+                core.setFailed(`GitHub variable '${variableName}' must contain valid JSON dictionary content.`);
+                return;
+              }
+
+              if (!parsed || Array.isArray(parsed) || typeof parsed !== 'object') {
+                core.setFailed(`GitHub variable '${variableName}' must be a JSON object.`);
+                return;
+              }
+
+              if (!Object.prototype.hasOwnProperty.call(parsed, selectedKey)) {
+                core.setFailed(
+                  `Mapping key '${selectedKey}' was not found in GitHub variable '${variableName}'. Available keys: ${Object.keys(parsed).join(', ') || 'none'}.`
+                );
+                return;
+              }
+
+              const selected = parsed[selectedKey];
+
+              if (!selected || Array.isArray(selected) || typeof selected !== 'object') {
+                core.setFailed(
+                  `Resolved mapping for '${selectedKey}' must be a dictionary of source to destination strings.`
+                );
+                return;
+              }
+
+              const sources = [];
+              const destinations = [];
+              for (const [src, dst] of Object.entries(selected)) {
+                const sourceValue = String(src).trim();
+                const destinationValue = String(dst).trim();
+                if (!sourceValue || !destinationValue) {
+                  core.setFailed('Dictionary keys and values must be non-empty strings.');
+                  return;
+                }
+                sources.push(sourceValue);
+                destinations.push(destinationValue);
+              }
+
+              if (sources.length === 0) {
+                core.setFailed(`GitHub variable '${variableName}' does not contain any mappings for '${selectedKey}'.`);
+                return;
+              }
+
+              sourceStrings = sources.join(',');
+              destinationStrings = destinations.join(',');
+              core.info(`Guard Rail 1 passed: GitHub variable '${variableName}' contains mapping key '${selectedKey}'.`);
+            } else {
+              core.info('Guard Rail 1 passed: manual mapping mode selected; GitHub variable lookup skipped.');
+            }
+
+            core.setOutput('source_strings', sourceStrings);
+            core.setOutput('destination_strings', destinationStrings);
+
+      - name: Guard Rail 2 - Validate input mappings
+        id: validate_mappings
+        shell: bash
+        env:
+          SOURCE_STRINGS: ${{ steps.guardrail_mapping_config.outputs.source_strings }}
+          DESTINATION_STRINGS: ${{ steps.guardrail_mapping_config.outputs.destination_strings }}
+        run: |
+          set -euo pipefail
+
+          mapfile -t SRC_LINES < <(printf '%s' "$SOURCE_STRINGS" | tr ',' '\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | sed '/^$/d')
+          mapfile -t DST_LINES < <(printf '%s' "$DESTINATION_STRINGS" | tr ',' '\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | sed '/^$/d')
+
+          SRC_COUNT="${#SRC_LINES[@]}"
+          DST_COUNT="${#DST_LINES[@]}"
+
+          echo "source_count=$SRC_COUNT" >> "$GITHUB_OUTPUT"
+          echo "destination_count=$DST_COUNT" >> "$GITHUB_OUTPUT"
+
+          if [ "$SRC_COUNT" -eq 0 ] || [ "$DST_COUNT" -eq 0 ]; then
+            echo "Input validation failed: source and destination string lists cannot be empty."
+            exit 1
+          fi
+
+          if [ "$SRC_COUNT" -ne "$DST_COUNT" ]; then
+            echo "Input validation failed: source strings count ($SRC_COUNT) must match destination strings count ($DST_COUNT)."
+            exit 1
+          fi
+
+          echo "Guard Rail 2 passed: Validate Input Mappings"
+          echo "Source strings count: $SRC_COUNT"
+          echo "Destination strings count: $DST_COUNT"
+          echo "String mappings:"
+          for idx in "${!SRC_LINES[@]}"; do
+            echo "- ${SRC_LINES[$idx]} ---> ${DST_LINES[$idx]}"
+          done
+
+      - name: Guard Rail 3 - Ensure source and destination branches exist
+        shell: bash
+        env:
+          SOURCE_BRANCH: ${{ inputs.source_branch }}
+          DESTINATION_BRANCH: ${{ inputs.destination_branch }}
+        run: |
+          set -euo pipefail
+
+          if ! git ls-remote --heads origin "$SOURCE_BRANCH" | grep -q "refs/heads/$SOURCE_BRANCH"; then
+            echo "Source branch '$SOURCE_BRANCH' does not exist on origin."
+            exit 1
+          fi
+
+          if ! git ls-remote --heads origin "$DESTINATION_BRANCH" | grep -q "refs/heads/$DESTINATION_BRANCH"; then
+            echo "Destination branch '$DESTINATION_BRANCH' does not exist on origin."
+            exit 1
+          fi
+
+          echo "Guard Rail 3 passed: Source and destination branches exist"
+          echo "- Source branch: $SOURCE_BRANCH"
+          echo "- Destination branch: $DESTINATION_BRANCH"
+
+      - name: Guard Rail 4 - Fail if open replacement PR to the destination branch already exists
+        shell: bash
+        env:
+          DESTINATION_BRANCH: ${{ inputs.destination_branch }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          EXISTING_PR=$(gh pr list \
+            --base "$DESTINATION_BRANCH" \
+            --state open \
+            --json number,url,headRefName \
+            --jq '.[] | select(.headRefName | ascii_downcase | startswith("draft/replacement-strings-")) | "PR #\(.number) - \(.url)"')
+
+          if [ -n "$EXISTING_PR" ]; then
+            echo "There is already an open replacement PR targeting '$DESTINATION_BRANCH':"
+            echo "$EXISTING_PR"
+            echo "Please merge or close it first."
+            exit 1
+          fi
+
+          echo "Guard Rail 4 passed: No conflicting open replacement PR found"
+          echo "- Destination branch: $DESTINATION_BRANCH"
+
+      - name: Guard Rail 5 - Ensure replacement folder exists
+        shell: bash
+        env:
+          TARGET_FOLDER: ${{ inputs.folder }}
+        run: |
+          set -euo pipefail
+
+          if [ ! -d "$TARGET_FOLDER" ]; then
+            echo "Selected replacement folder '$TARGET_FOLDER' does not exist in the repository."
+            exit 1
+          fi
+
+          echo "Guard Rail 5 passed: Replacement folder exists"
+          echo "- Folder: $TARGET_FOLDER"
+
+      - name: Guard Rail 6 - Ensure SSH signing secrets exist in the repository for commit signing
+        shell: bash
+        env:
+          SSH_SIGNING_KEY: ${{ secrets.SSH_SIGNING_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${SSH_SIGNING_KEY}" ]; then
+            echo "Missing signing secret. Please configure repository secret SSH_SIGNING_KEY."
+            exit 1
+          fi
+
+          echo "Guard Rail 6 passed: SSH signing secret is configured"
+
+      - name: Guard Rail 7 - Ensure at least one source string exists in the replacement folder
+        shell: bash
+        env:
+          SOURCE_STRINGS: ${{ steps.guardrail_mapping_config.outputs.source_strings }}
+          TARGET_FOLDER: ${{ inputs.folder }}
+        run: |
+          set -euo pipefail
+
+          if [ ! -d "$TARGET_FOLDER" ]; then
+            echo "No files found under '$TARGET_FOLDER'."
+            exit 1
+          fi
+
+          if ! find "$TARGET_FOLDER" -type f | grep -q .; then
+            echo "No files found under '$TARGET_FOLDER'."
+            exit 1
+          fi
+
+          mapfile -t SOURCES < <(printf '%s' "$SOURCE_STRINGS" | tr ',' '\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | sed '/^$/d')
+          ANY_SOURCE_FOUND=false
+
+          for src in "${SOURCES[@]}"; do
+            if grep -RIlF --binary-files=without-match -- "$src" "$TARGET_FOLDER" >/dev/null; then
+              ANY_SOURCE_FOUND=true
+              break
+            fi
+          done
+
+          if [ "$ANY_SOURCE_FOUND" != true ]; then
+            echo "None of the source strings were found in the selected folder. At least one source string must exist."
+            exit 1
+          fi
+
+          echo "Guard Rail 7 passed: At least one source string exists in target folder"
+          echo "- Folder: $TARGET_FOLDER"
+
+      - name: Failure summary (guardrail)
+        if: ${{ failure() }}
+        shell: bash
+        env:
+          SOURCE_BRANCH: ${{ inputs.source_branch }}
+          DESTINATION_BRANCH: ${{ inputs.destination_branch }}
+          SOURCE_STRINGS: ${{ steps.guardrail_mapping_config.outputs.source_strings }}
+          DESTINATION_STRINGS: ${{ steps.guardrail_mapping_config.outputs.destination_strings }}
+          MAPPING_INPUT_MODE: ${{ inputs.mapping_input_mode }}
+          MAPPING_VARIABLE_NAME: ${{ steps.resolve_mappings.outputs.mapping_variable_name }}
+          MAPPING_DICTIONARY_KEY: ${{ steps.resolve_mappings.outputs.mapping_dictionary_key }}
+          TARGET_FOLDER: ${{ inputs.folder }}
+        run: |
+          {
+            echo "## Failure Summary"
+            echo "- Failed job: guardrail"
+            echo "- Reason: One or more guard rail steps failed."
+            echo ""
+            echo "## User Inputs"
+            echo "- Source branch: $SOURCE_BRANCH"
+            echo "- Destination branch: $DESTINATION_BRANCH"
+            echo "- Mapping input mode: $MAPPING_INPUT_MODE"
+            echo "- Mapping variable name: $MAPPING_VARIABLE_NAME"
+            echo "- Mapping dictionary key: $MAPPING_DICTIONARY_KEY"
+            echo "- Source strings: $SOURCE_STRINGS"
+            echo "- Destination strings: $DESTINATION_STRINGS"
+            echo "- Folder: $TARGET_FOLDER"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  replacement_string:
+    needs: guardrail
+    runs-on: [self-hosted, bolt-ubuntu]
+    outputs:
+      pr_url: ${{ steps.create_pr.outputs.pr_url }}
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository on source branch
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.source_branch }}
+
+      - name: Create replacement branch from source branch
+        id: branch
+        shell: bash
+        env:
+          SOURCE_BRANCH: ${{ inputs.source_branch }}
+        run: |
+          set -euo pipefail
+
+          git fetch origin "$SOURCE_BRANCH"
+          TIMESTAMP="$(date +%Y%m%d%H%M%S)"
+          NEW_BRANCH="draft/replacement-strings-${TIMESTAMP}"
+          git checkout -B "$NEW_BRANCH" "origin/$SOURCE_BRANCH"
+          echo "new_branch=$NEW_BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Configure signed commits (SSH)
+        shell: bash
+        env:
+          SSH_SIGNING_KEY: ${{ secrets.SSH_SIGNING_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          install -m 600 /dev/null ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_SIGNING_KEY" > ~/.ssh/id_ed25519
+          git config --global gpg.format ssh
+          git config --global user.signingkey ~/.ssh/id_ed25519
+          git config --global commit.gpgsign true
+          git config --global user.name "SRVAMR-COMMGIT"
+          git config --global user.email "DL-SFADevOps@pfizer.com"
+
+      - name: Apply mapped replacements and generate logs
+        id: replace
+        shell: bash
+        env:
+          SOURCE_BRANCH: ${{ inputs.source_branch }}
+          DESTINATION_BRANCH: ${{ inputs.destination_branch }}
+          SOURCE_STRINGS: ${{ needs.guardrail.outputs.resolved_source_strings }}
+          DESTINATION_STRINGS: ${{ needs.guardrail.outputs.resolved_destination_strings }}
+          MAPPING_INPUT_MODE: ${{ needs.guardrail.outputs.resolved_input_mode }}
+          MAPPING_VARIABLE_NAME: ${{ needs.guardrail.outputs.resolved_mapping_variable_name }}
+          MAPPING_DICTIONARY_KEY: ${{ needs.guardrail.outputs.resolved_mapping_dictionary_key }}
+          TARGET_FOLDER: ${{ inputs.folder }}
+        run: |
+          set -euo pipefail
+
+          echo "[INFO] Starting replacement stage"
+          echo "[INFO] Target folder: $TARGET_FOLDER"
+
+          mapfile -t SOURCES < <(printf '%s' "$SOURCE_STRINGS" | tr ',' '\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | sed '/^$/d')
+          mapfile -t DESTS < <(printf '%s' "$DESTINATION_STRINGS" | tr ',' '\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | sed '/^$/d')
+
+          echo "[INFO] Source values count: ${#SOURCES[@]}"
+          echo "[INFO] Destination values count: ${#DESTS[@]}"
+
+          if [ "${#SOURCES[@]}" -ne "${#DESTS[@]}" ]; then
+            echo "source/destination count mismatch: ${#SOURCES[@]} vs ${#DESTS[@]}"
+            exit 1
+          fi
+
+          if [ "$(find "$TARGET_FOLDER" -type f 2>/dev/null | wc -l)" -eq 0 ]; then
+            echo "No files found under '$TARGET_FOLDER' or its subfolders."
+            exit 1
+          fi
+
+          ANY_SOURCE_FOUND=false
+          for src in "${SOURCES[@]}"; do
+            if grep -RIlF --binary-files=without-match -- "$src" "$TARGET_FOLDER" >/dev/null; then
+              ANY_SOURCE_FOUND=true
+              break
+            fi
+          done
+
+          if [ "$ANY_SOURCE_FOUND" != true ]; then
+            echo "None of the source strings were found in '$TARGET_FOLDER'. At least one source string must exist."
+            exit 1
+          fi
+
+          TOTAL_REPLACEMENTS=0
+          FILES_CHANGED=0
+          SUMMARY_LINES=""
+          SCANNED_FILES=0
+
+          while IFS= read -r -d '' file; do
+            SCANNED_FILES=$((SCANNED_FILES + 1))
+            if ! grep -Iq . "$file"; then
+              continue
+            fi
+
+            FILE_REPLACEMENTS=0
+            for idx in "${!SOURCES[@]}"; do
+              SRC="${SOURCES[$idx]}"
+              DST="${DESTS[$idx]}"
+
+              COUNT=$(grep -oF -- "$SRC" "$file" | wc -l || true)
+              COUNT=$(echo "$COUNT" | tr -d '[:space:]')
+
+              if [ "$COUNT" -gt 0 ]; then
+                SRC="$SRC" DST="$DST" perl -0777 -i -pe 's/\Q$ENV{SRC}\E/$ENV{DST}/g' "$file"
+                FILE_REPLACEMENTS=$((FILE_REPLACEMENTS + COUNT))
+              fi
+            done
+
+            if [ "$FILE_REPLACEMENTS" -gt 0 ]; then
+              TOTAL_REPLACEMENTS=$((TOTAL_REPLACEMENTS + FILE_REPLACEMENTS))
+              FILES_CHANGED=$((FILES_CHANGED + 1))
+              SUMMARY_LINES+="- $file: $FILE_REPLACEMENTS"$'\n'
+              echo "[REPLACED] $file -> $FILE_REPLACEMENTS"
+            fi
+          done < <(find "$TARGET_FOLDER" -type f -print0)
+
+          echo "[INFO] Files scanned: $SCANNED_FILES"
+          echo "[INFO] Files changed: $FILES_CHANGED"
+          echo "[INFO] Total replacements: $TOTAL_REPLACEMENTS"
+
+          if [ "$TOTAL_REPLACEMENTS" -eq 0 ]; then
+            echo "No replacements were applied even though at least one source string was found. Check mapping values and file content."
+            exit 1
+          fi
+
+          {
+            echo "## Input Details"
+            echo "- Source branch: $SOURCE_BRANCH"
+            echo "- Destination branch: $DESTINATION_BRANCH"
+            echo "- Mapping input mode: $MAPPING_INPUT_MODE"
+            echo "- Mapping variable name: $MAPPING_VARIABLE_NAME"
+            echo "- Mapping dictionary key: $MAPPING_DICTIONARY_KEY"
+            echo "- Folder: $TARGET_FOLDER"
+            echo "- Source strings: $SOURCE_STRINGS"
+            echo "- Destination strings: $DESTINATION_STRINGS"
+            echo ""
+            echo "## Replacement Summary"
+            echo "- Total replacements: $TOTAL_REPLACEMENTS"
+            echo "- Files changed: $FILES_CHANGED"
+            echo ""
+            echo "### Files Changed"
+            if [ "$FILES_CHANGED" -gt 0 ]; then
+              printf '%s' "$SUMMARY_LINES"
+            else
+              echo "- None"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          {
+            echo "total_replacements=$TOTAL_REPLACEMENTS"
+            echo "files_changed=$FILES_CHANGED"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "[INFO] Replacement stage completed successfully"
+
+      - name: Commit and push signed changes
+        shell: bash
+        env:
+          NEW_BRANCH: ${{ steps.branch.outputs.new_branch }}
+          TARGET_FOLDER: ${{ inputs.folder }}
+        run: |
+          set -euo pipefail
+          git config --global user.name "SRVAMR-COMMGIT"
+          git config --global user.email "DL-SFADevOps@pfizer.com"
+          git add "$TARGET_FOLDER"
+          git commit -m "Automated Replacement of Strings"
+          git push origin "$NEW_BRANCH"
+          echo "--- Summary of changes pushed ---"
+          git log -1 --stat
+
+      - name: Create pull request to destination branch
+        id: create_pr
+        uses: actions/github-script@v9
+        env:
+          NEW_BRANCH: ${{ steps.branch.outputs.new_branch }}
+          DESTINATION_BRANCH: ${{ inputs.destination_branch }}
+          SOURCE_BRANCH: ${{ inputs.source_branch }}
+          MAPPING_INPUT_MODE: ${{ needs.guardrail.outputs.resolved_input_mode }}
+          MAPPING_VARIABLE_NAME: ${{ needs.guardrail.outputs.resolved_mapping_variable_name }}
+          MAPPING_DICTIONARY_KEY: ${{ needs.guardrail.outputs.resolved_mapping_dictionary_key }}
+          TARGET_FOLDER: ${{ inputs.folder }}
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const head = process.env.NEW_BRANCH;
+            const base = process.env.DESTINATION_BRANCH;
+            const title = head;
+            const body = [
+              'Automated replacement strings update.',
+              '',
+              `- Source branch: ${process.env.SOURCE_BRANCH}`,
+              `- Destination branch: ${base}`,
+              `- Mapping input mode: ${process.env.MAPPING_INPUT_MODE}`,
+              `- Mapping variable name: ${process.env.MAPPING_VARIABLE_NAME || 'N/A'}`,
+              `- Mapping dictionary key: ${process.env.MAPPING_DICTIONARY_KEY || 'N/A'}`,
+              `- Target folder: ${process.env.TARGET_FOLDER}`,
+              `- Total replacements: ${{ steps.replace.outputs.total_replacements }}`,
+              `- Files changed: ${{ steps.replace.outputs.files_changed }}`
+            ].join('\n');
+
+            const pr = await github.rest.pulls.create({
+              owner,
+              repo,
+              title,
+              head,
+              base,
+              body,
+              draft: true
+            });
+
+            core.info(`Created PR: ${pr.data.html_url}`);
+            core.setOutput('pr_url', pr.data.html_url);
+
+      - name: Failure summary (replacement_string)
+        if: ${{ failure() }}
+        shell: bash
+        env:
+          SOURCE_BRANCH: ${{ inputs.source_branch }}
+          DESTINATION_BRANCH: ${{ inputs.destination_branch }}
+          SOURCE_STRINGS: ${{ needs.guardrail.outputs.resolved_source_strings }}
+          DESTINATION_STRINGS: ${{ needs.guardrail.outputs.resolved_destination_strings }}
+          MAPPING_INPUT_MODE: ${{ needs.guardrail.outputs.resolved_input_mode }}
+          MAPPING_VARIABLE_NAME: ${{ needs.guardrail.outputs.resolved_mapping_variable_name }}
+          MAPPING_DICTIONARY_KEY: ${{ needs.guardrail.outputs.resolved_mapping_dictionary_key }}
+          TARGET_FOLDER: ${{ inputs.folder }}
+        run: |
+          {
+            echo "## Failure Summary"
+            echo "- Failed job: replacement_string"
+            echo "- Reason: One or more replacement_string steps failed."
+            echo ""
+            echo "## User Inputs"
+            echo "- Source branch: $SOURCE_BRANCH"
+            echo "- Destination branch: $DESTINATION_BRANCH"
+            echo "- Mapping input mode: $MAPPING_INPUT_MODE"
+            echo "- Mapping variable name: $MAPPING_VARIABLE_NAME"
+            echo "- Mapping dictionary key: $MAPPING_DICTIONARY_KEY"
+            echo "- Source strings: $SOURCE_STRINGS"
+            echo "- Destination strings: $DESTINATION_STRINGS"
+            echo "- Folder: $TARGET_FOLDER"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Final output
+        shell: bash
+        env:
+          PR_URL: ${{ steps.create_pr.outputs.pr_url }}
+        run: |
+          {
+            echo ""
+            echo "## Pull Request"
+            echo "- PR Link: $PR_URL"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          echo "Created PR: $PR_URL"
